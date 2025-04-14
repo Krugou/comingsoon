@@ -307,9 +307,9 @@
 
   <!-- Fallback div in case 3D rendering fails -->
   <div id="fallback-container">
-    <h1>BLUEPRINT MARKET</h1>
-    <p>COMING SOON 2025</p>
-    <p class="mt-8 text-sm text-blueprintGray">TURBIINI X METROPOLIA</p>
+    <h1 id="fallback-title">BLUEPRINT MARKET</h1>
+    <p id="fallback-subtitle">COMING SOON 2025</p>
+    <p id="fallback-attribution" class="mt-8 text-sm text-blueprintGray">TURBIINI X METROPOLIA</p>
   </div>
 
   <script>
@@ -324,6 +324,99 @@
       let particles;
       let animationId;
       const clock = new THREE.Clock();
+
+      // Default text configuration
+      const defaultConfig = {
+        title: {
+          text: "BLUEPRINT MARKET",
+          color: 0xfb7aae, // blueprintAccent
+          size: 1.2,
+          yPos: 3
+        },
+        subtitle: {
+          text: "COMING SOON 2025",
+          color: 0xf7fafc, // blueprintLight
+          size: 0.8,
+          yPos: -2
+        },
+        attribution: {
+          text: "Turbiini & Metropolia university of applied sciences",
+          color: 0x637786, // blueprintGray
+          size: 0.4,
+          yPos: -5.5
+        }
+      };
+
+      // Parse URL parameters to customize the text
+      const getCustomConfig = () => {
+        const params = new URLSearchParams( window.location.search );
+
+        // Create a copy of the default config
+        const config = JSON.parse( JSON.stringify( defaultConfig ) );
+
+        // Helper function to safely parse hex colors
+        const parseColor = ( colorStr ) => {
+          if ( !colorStr ) return null;
+          // Remove # if present and ensure it's a valid hex color
+          colorStr = colorStr.replace( /^#/, '' );
+          if ( /^[0-9A-F]{6}$/i.test( colorStr ) ) {
+            return parseInt( colorStr, 16 );
+          }
+          return null;
+        };
+
+        // Helper function to safely parse numbers
+        const parseNumber = ( numStr, defaultValue ) => {
+          if ( !numStr ) return defaultValue;
+          const parsed = parseFloat( numStr );
+          return isNaN( parsed ) ? defaultValue : parsed;
+        };
+
+        // Update title if provided
+        if ( params.has( 'title' ) ) {
+          config.title.text = params.get( 'title' ).substring( 0, 50 ); // Limit length for safety
+        }
+
+        // Update subtitle if provided
+        if ( params.has( 'subtitle' ) ) {
+          config.subtitle.text = params.get( 'subtitle' ).substring( 0, 50 );
+        }
+
+        // Update attribution if provided
+        if ( params.has( 'attribution' ) ) {
+          config.attribution.text = params.get( 'attribution' ).substring( 0, 100 );
+        }
+
+        // Update colors if provided
+        const titleColor = parseColor( params.get( 'titleColor' ) );
+        if ( titleColor !== null ) config.title.color = titleColor;
+
+        const subtitleColor = parseColor( params.get( 'subtitleColor' ) );
+        if ( subtitleColor !== null ) config.subtitle.color = subtitleColor;
+
+        const attributionColor = parseColor( params.get( 'attributionColor' ) );
+        if ( attributionColor !== null ) config.attribution.color = attributionColor;
+
+        // Update sizes if provided
+        config.title.size = parseNumber( params.get( 'titleSize' ), config.title.size );
+        config.subtitle.size = parseNumber( params.get( 'subtitleSize' ), config.subtitle.size );
+        config.attribution.size = parseNumber( params.get( 'attributionSize' ), config.attribution.size );
+
+        // Update positions if provided
+        config.title.yPos = parseNumber( params.get( 'titleY' ), config.title.yPos );
+        config.subtitle.yPos = parseNumber( params.get( 'subtitleY' ), config.subtitle.yPos );
+        config.attribution.yPos = parseNumber( params.get( 'attributionY' ), config.attribution.yPos );
+
+        return config;
+      };
+
+      // Get custom configuration from URL parameters
+      const textConfig = getCustomConfig();
+
+      // Update the fallback content based on the configuration
+      document.getElementById( 'fallback-title' ).textContent = textConfig.title.text;
+      document.getElementById( 'fallback-subtitle' ).textContent = textConfig.subtitle.text;
+      document.getElementById( 'fallback-attribution' ).textContent = textConfig.attribution.text;
 
       // Error handling class
       class SceneError extends Error {
@@ -427,35 +520,35 @@
        */
       const createText = async () => {
         try {
-          // Create title
+          // Create title using custom config
           const title = await createTextGeometry(
             scene,
-            "BLUEPRINT MARKET",
-            0xfb7aae, // blueprintAccent
-            1.2,
-            3
+            textConfig.title.text,
+            textConfig.title.color,
+            textConfig.title.size,
+            textConfig.title.yPos
           );
           textGroups.push( title.group );
           if ( title.textMesh ) textMeshes.push( title.textMesh );
 
-          // Create subtitle
+          // Create subtitle using custom config
           const subtitle = await createTextGeometry(
             scene,
-            "COMING SOON 2025",
-            0xf7fafc, // blueprintLight
-            0.8,
-            -2
+            textConfig.subtitle.text,
+            textConfig.subtitle.color,
+            textConfig.subtitle.size,
+            textConfig.subtitle.yPos
           );
           textGroups.push( subtitle.group );
           if ( subtitle.textMesh ) textMeshes.push( subtitle.textMesh );
 
-          // Create attribution text at bottom
+          // Create attribution text using custom config
           const attribution = await createTextGeometry(
             scene,
-            "Turbiini & Metropolia university of applied sciences",
-            0x637786, // blueprintGray
-            0.4, // Smaller size
-            -5.5  // Lower position
+            textConfig.attribution.text,
+            textConfig.attribution.color,
+            textConfig.attribution.size,
+            textConfig.attribution.yPos
           );
           textGroups.push( attribution.group );
           if ( attribution.textMesh ) textMeshes.push( attribution.textMesh );
