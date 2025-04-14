@@ -545,10 +545,8 @@
        * @param {KeyboardEvent} event - Keyboard event
        */
       const handleKeydown = ( event ) => {
-        // Prevent default to avoid scrolling or other browser actions
-        event.preventDefault();
-
-        // Trigger the same explosion effect as click
+        // Don't prevent default for all keys to allow normal browser functionality
+        // Only trigger the explosion without blocking normal keyboard behavior
         triggerExplosion();
       };
 
