@@ -313,81 +313,7 @@
   </div>
 
   <script>
-    /**
-     * PARAMETERS GUIDE:
-     *
-     * This page can be customized using URL parameters:
-     * 1. title - Sets the main title text
-     *    Example: ?title=CUSTOM+TITLE
-     *
-     * 2. subtitle - Sets the subtitle text
-     *    Example: ?subtitle=LAUNCHING+2026
-     *
-     * 3. footer - Sets the attribution text at the bottom
-     *    Example: ?footer=CREATED+BY+SOMEONE
-     *
-     * 4. colors - Sets custom colors (title,subtitle,footer)
-     *    Example: ?colors=fb7aae,ffffff,637786
-     *
-     * All parameters can be combined:
-     * Example: index.html?title=MY+PROJECT&subtitle=COMING+SOON&footer=MADE+WITH+LOVE&colors=ff0000,00ff00,0000ff
-     *
-     * INPUT CONTROLS:
-     * - Click/touch: Explode text
-     * - Any keyboard key: Explode text
-     */
     document.addEventListener( 'DOMContentLoaded', async () => {
-      // Parse URL parameters for customization
-      const params = new URLSearchParams( window.location.search );
-
-      // Text content configuration with defaults and parameter overrides
-      const textConfig = {
-        title: {
-          text: params.get( 'title' ) || "BLUEPRINT MARKET",
-          color: 0xfb7aae, // blueprintAccent
-          size: 1.2,
-          yPos: 3
-        },
-        subtitle: {
-          text: params.get( 'subtitle' ) || "COMING SOON 2025",
-          color: 0xf7fafc, // blueprintLight
-          size: 0.8,
-          yPos: -2
-        },
-        footer: {
-          text: params.get( 'footer' ) || "Turbiini & Metropolia university of applied sciences",
-          color: 0x637786, // blueprintGray
-          size: 0.4,
-          yPos: -5.5
-        }
-      };
-
-      // Parse custom colors if provided (format: colors=title,subtitle,footer)
-      if ( params.get( 'colors' ) ) {
-        const colorValues = params.get( 'colors' ).split( ',' );
-        if ( colorValues.length >= 1 && colorValues[ 0 ].trim() !== '' ) {
-          textConfig.title.color = parseInt( '0x' + colorValues[ 0 ].replace( /^#/, '' ) );
-        }
-        if ( colorValues.length >= 2 && colorValues[ 1 ].trim() !== '' ) {
-          textConfig.subtitle.color = parseInt( '0x' + colorValues[ 1 ].replace( /^#/, '' ) );
-        }
-        if ( colorValues.length >= 3 && colorValues[ 2 ].trim() !== '' ) {
-          textConfig.footer.color = parseInt( '0x' + colorValues[ 2 ].replace( /^#/, '' ) );
-        }
-      }
-
-      // Also update the fallback container with parameter values
-      const fallbackContainer = document.getElementById( 'fallback-container' );
-      if ( params.get( 'title' ) ) {
-        fallbackContainer.querySelector( 'h1' ).textContent = params.get( 'title' );
-      }
-      if ( params.get( 'subtitle' ) ) {
-        fallbackContainer.querySelector( 'p:nth-of-type(1)' ).textContent = params.get( 'subtitle' );
-      }
-      if ( params.get( 'footer' ) ) {
-        fallbackContainer.querySelector( 'p:nth-of-type(2)' ).textContent = params.get( 'footer' );
-      }
-
       // Basic variable setup
       const container = document.getElementById( 'scene-container' );
       const fallback = document.getElementById( 'fallback-container' );
@@ -471,7 +397,7 @@
           // Create particle background
           createParticles();
 
-          // Create text with TextGeometry using parameterized content
+          // Create text with TextGeometry
           await createText();
 
           // Hide loading indicator
@@ -481,9 +407,6 @@
           window.addEventListener( 'resize', handleResize );
           renderer.domElement.addEventListener( 'click', handleClick );
           renderer.domElement.addEventListener( 'touchstart', handleClick );
-
-          // Add keyboard event listener for explosion
-          window.addEventListener( 'keydown', handleKeydown );
 
           // Start animation loop
           animate( 0 );
@@ -497,40 +420,40 @@
       };
 
       /**
-       * Create text using TextGeometry with parameterized content
+       * Create text using TextGeometry
        * @returns {Promise<void>}
        */
       const createText = async () => {
         try {
-          // Create title from parameters
+          // Create title
           const title = await createTextGeometry(
             scene,
-            textConfig.title.text,
-            textConfig.title.color,
-            textConfig.title.size,
-            textConfig.title.yPos
+            "BLUEPRINT MARKET",
+            0xfb7aae, // blueprintAccent
+            1.2,
+            3
           );
           textGroups.push( title.group );
           if ( title.textMesh ) textMeshes.push( title.textMesh );
 
-          // Create subtitle from parameters
+          // Create subtitle
           const subtitle = await createTextGeometry(
             scene,
-            textConfig.subtitle.text,
-            textConfig.subtitle.color,
-            textConfig.subtitle.size,
-            textConfig.subtitle.yPos
+            "COMING SOON 2025",
+            0xf7fafc, // blueprintLight
+            0.8,
+            -2
           );
           textGroups.push( subtitle.group );
           if ( subtitle.textMesh ) textMeshes.push( subtitle.textMesh );
 
-          // Create attribution text at bottom from parameters
+          // Create attribution text at bottom
           const attribution = await createTextGeometry(
             scene,
-            textConfig.footer.text,
-            textConfig.footer.color,
-            textConfig.footer.size,
-            textConfig.footer.yPos
+            "Turbiini & Metropolia university of applied sciences",
+            0x637786, // blueprintGray
+            0.4, // Smaller size
+            -5.5  // Lower position
           );
           textGroups.push( attribution.group );
           if ( attribution.textMesh ) textMeshes.push( attribution.textMesh );
@@ -548,15 +471,6 @@
           console.error( "Error creating text:", error );
           throw new SceneError( "Text creation failed" );
         }
-      };
-
-      /**
-       * Handle keyboard press to explode text
-       * @param {KeyboardEvent} event - Keyboard event
-       */
-      const handleKeydown = ( event ) => {
-        // Trigger explosion on any key press
-        handleClick();
       };
 
       /**
@@ -626,10 +540,10 @@
 
       /**
        * Handle click to explode text
-       * @param {Event} event - Click or touch event (optional)
+       * @param {Event} event - Click or touch event
        */
       const handleClick = ( event ) => {
-        // Prevent default for events
+        // Prevent default for touch events
         if ( event && event.preventDefault ) {
           event.preventDefault();
         }
@@ -675,6 +589,8 @@
           const audioContext = new ( window.AudioContext || window.webkitAudioContext )();
           const oscillator = audioContext.createOscillator();
           const gain = audioContext.createGain();
+          // q: how to make longer
+          // a:
           oscillator.type = 'triangle';
           oscillator.frequency.setValueAtTime( 250, audioContext.currentTime );
           oscillator.frequency.exponentialRampToValueAtTime( 0.01, audioContext.currentTime + 1.5 );
@@ -836,17 +752,9 @@
         // Add cleanup handler
         window.addEventListener( 'beforeunload', cleanup );
 
-        // Update cleanup function to remove keyboard listener
-        const originalCleanup = cleanup;
-        cleanup = () => {
-          window.removeEventListener( 'keydown', handleKeydown );
-          originalCleanup();
-        };
-
-        // Log setup result with usage instructions
+        // Log setup result
         if ( success ) {
-          console.log( '3D scene initialized with TextGeometry. Click/tap or press any key to explode text.' );
-          console.log( 'Customize display with URL parameters: ?title=TEXT&subtitle=TEXT&footer=TEXT&colors=hex,hex,hex' );
+          console.log( '3D scene initialized with TextGeometry. Click or tap to explode text.' );
         } else {
           console.warn( '3D initialization failed. Using fallback display.' );
         }
@@ -859,4 +767,3 @@
 </body>
 
 </html>
-```
