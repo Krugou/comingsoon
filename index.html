@@ -407,6 +407,8 @@
           window.addEventListener( 'resize', handleResize );
           renderer.domElement.addEventListener( 'click', handleClick );
           renderer.domElement.addEventListener( 'touchstart', handleClick );
+          // Add keyboard event listener to trigger explosion
+          window.addEventListener( 'keydown', handleKeydown );
 
           // Start animation loop
           animate( 0 );
@@ -539,6 +541,18 @@
       };
 
       /**
+       * Handle key press to explode text
+       * @param {KeyboardEvent} event - Keyboard event
+       */
+      const handleKeydown = ( event ) => {
+        // Prevent default to avoid scrolling or other browser actions
+        event.preventDefault();
+
+        // Trigger the same explosion effect as click
+        triggerExplosion();
+      };
+
+      /**
        * Handle click to explode text
        * @param {Event} event - Click or touch event
        */
@@ -548,6 +562,14 @@
           event.preventDefault();
         }
 
+        // Trigger explosion
+        triggerExplosion();
+      };
+
+      /**
+       * Common function to trigger explosion animation
+       */
+      const triggerExplosion = () => {
         if ( animState.exploding ) return;
 
         animState.exploding = true;
@@ -589,8 +611,7 @@
           const audioContext = new ( window.AudioContext || window.webkitAudioContext )();
           const oscillator = audioContext.createOscillator();
           const gain = audioContext.createGain();
-          // q: how to make longer
-          // a:
+
           oscillator.type = 'triangle';
           oscillator.frequency.setValueAtTime( 250, audioContext.currentTime );
           oscillator.frequency.exponentialRampToValueAtTime( 0.01, audioContext.currentTime + 1.5 );
@@ -717,6 +738,7 @@
         if ( animationId ) cancelAnimationFrame( animationId );
 
         window.removeEventListener( 'resize', handleResize );
+        window.removeEventListener( 'keydown', handleKeydown );
         if ( renderer && renderer.domElement ) {
           renderer.domElement.removeEventListener( 'click', handleClick );
           renderer.domElement.removeEventListener( 'touchstart', handleClick );
