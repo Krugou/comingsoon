@@ -325,7 +325,7 @@
       let animationId;
       const clock = new THREE.Clock();
 
-      // Default text configuration
+      // Default text configuration - will be used if no URL parameters are provided
       const defaultConfig = {
         title: {
           text: "BLUEPRINT MARKET",
@@ -344,14 +344,26 @@
           color: 0x637786, // blueprintGray
           size: 0.4,
           yPos: -5.5
+        },
+        background: {
+          color: 0x242D38, // blueprintPrimary
+          particleCount: 1000,
+          particleColor: 0xf7fafc, // blueprintLight
+          particleSize: 0.1,
+          particleOpacity: 0.6
+        },
+        animation: {
+          explosionDuration: 6000,
+          explosionStrength: 15,
+          rotationStrength: 3
         }
       };
 
-      // Parse URL parameters to customize the text
+      // Parse URL parameters to customize all text and animation properties
       const getCustomConfig = () => {
         const params = new URLSearchParams( window.location.search );
 
-        // Create a copy of the default config
+        // Create a deep copy of the default config
         const config = JSON.parse( JSON.stringify( defaultConfig ) );
 
         // Helper function to safely parse hex colors
@@ -372,40 +384,70 @@
           return isNaN( parsed ) ? defaultValue : parsed;
         };
 
-        // Update title if provided
-        if ( params.has( 'title' ) ) {
-          config.title.text = params.get( 'title' ).substring( 0, 50 ); // Limit length for safety
-        }
+        // Process text parameters for each text element
+        [ 'title', 'subtitle', 'attribution' ].forEach( textElement => {
+          // Update text content if provided
+          if ( params.has( textElement ) ) {
+            config[ textElement ].text = params.get( textElement ).substring( 0,
+              textElement === 'attribution' ? 100 : 50 ); // Limit length for safety
+          }
 
-        // Update subtitle if provided
-        if ( params.has( 'subtitle' ) ) {
-          config.subtitle.text = params.get( 'subtitle' ).substring( 0, 50 );
-        }
+          // Update color if provided
+          const colorParam = params.get( `${ textElement }Color` );
+          const parsedColor = parseColor( colorParam );
+          if ( parsedColor !== null ) config[ textElement ].color = parsedColor;
 
-        // Update attribution if provided
-        if ( params.has( 'attribution' ) ) {
-          config.attribution.text = params.get( 'attribution' ).substring( 0, 100 );
-        }
+          // Update size if provided
+          config[ textElement ].size = parseNumber(
+            params.get( `${ textElement }Size` ),
+            config[ textElement ].size
+          );
 
-        // Update colors if provided
-        const titleColor = parseColor( params.get( 'titleColor' ) );
-        if ( titleColor !== null ) config.title.color = titleColor;
+          // Update position if provided
+          config[ textElement ].yPos = parseNumber(
+            params.get( `${ textElement }Y` ),
+            config[ textElement ].yPos
+          );
+        } );
 
-        const subtitleColor = parseColor( params.get( 'subtitleColor' ) );
-        if ( subtitleColor !== null ) config.subtitle.color = subtitleColor;
+        // Process background parameters
+        const bgColor = parseColor( params.get( 'bgColor' ) );
+        if ( bgColor !== null ) config.background.color = bgColor;
 
-        const attributionColor = parseColor( params.get( 'attributionColor' ) );
-        if ( attributionColor !== null ) config.attribution.color = attributionColor;
+        // Process particle parameters
+        config.background.particleCount = parseNumber(
+          params.get( 'particleCount' ),
+          config.background.particleCount
+        );
 
-        // Update sizes if provided
-        config.title.size = parseNumber( params.get( 'titleSize' ), config.title.size );
-        config.subtitle.size = parseNumber( params.get( 'subtitleSize' ), config.subtitle.size );
-        config.attribution.size = parseNumber( params.get( 'attributionSize' ), config.attribution.size );
+        const particleColor = parseColor( params.get( 'particleColor' ) );
+        if ( particleColor !== null ) config.background.particleColor = particleColor;
 
-        // Update positions if provided
-        config.title.yPos = parseNumber( params.get( 'titleY' ), config.title.yPos );
-        config.subtitle.yPos = parseNumber( params.get( 'subtitleY' ), config.subtitle.yPos );
-        config.attribution.yPos = parseNumber( params.get( 'attributionY' ), config.attribution.yPos );
+        config.background.particleSize = parseNumber(
+          params.get( 'particleSize' ),
+          config.background.particleSize
+        );
+
+        config.background.particleOpacity = parseNumber(
+          params.get( 'particleOpacity' ),
+          config.background.particleOpacity
+        );
+
+        // Process animation parameters
+        config.animation.explosionDuration = parseNumber(
+          params.get( 'explosionDuration' ),
+          config.animation.explosionDuration
+        );
+
+        config.animation.explosionStrength = parseNumber(
+          params.get( 'explosionStrength' ),
+          config.animation.explosionStrength
+        );
+
+        config.animation.rotationStrength = parseNumber(
+          params.get( 'rotationStrength' ),
+          config.animation.rotationStrength
+        );
 
         return config;
       };
@@ -413,10 +455,32 @@
       // Get custom configuration from URL parameters
       const textConfig = getCustomConfig();
 
+      // Update document title based on text configuration
+      document.title = `${ textConfig.title.text } - ${ textConfig.subtitle.text }`;
+
+      // Update meta description
+      const metaDescription = document.querySelector( 'meta[name="description"]' );
+      if ( metaDescription ) {
+        metaDescription.setAttribute( 'content', `${ textConfig.title.text } - ${ textConfig.subtitle.text }` );
+      }
+
       // Update the fallback content based on the configuration
       document.getElementById( 'fallback-title' ).textContent = textConfig.title.text;
       document.getElementById( 'fallback-subtitle' ).textContent = textConfig.subtitle.text;
       document.getElementById( 'fallback-attribution' ).textContent = textConfig.attribution.text;
+
+      // Update fallback styles to match custom colors
+      const fallbackTitle = document.getElementById( 'fallback-title' );
+      fallbackTitle.style.color = '#' + textConfig.title.color.toString( 16 ).padStart( 6, '0' );
+
+      const fallbackSubtitle = document.getElementById( 'fallback-subtitle' );
+      fallbackSubtitle.style.color = '#' + textConfig.subtitle.color.toString( 16 ).padStart( 6, '0' );
+
+      const fallbackAttribution = document.getElementById( 'fallback-attribution' );
+      fallbackAttribution.style.color = '#' + textConfig.attribution.color.toString( 16 ).padStart( 6, '0' );
+
+      // Update body background color
+      document.body.style.backgroundColor = '#' + textConfig.background.color.toString( 16 ).padStart( 6, '0' );
 
       // Error handling class
       class SceneError extends Error {
@@ -430,7 +494,7 @@
       const animState = {
         exploding: false,
         startTime: 0,
-        duration: 6000,
+        duration: textConfig.animation.explosionDuration,
         meshes: [],
         originalPositions: [],
         originalRotations: []
@@ -444,7 +508,7 @@
         try {
           // Create scene
           scene = new THREE.Scene();
-          scene.background = new THREE.Color( '#242D38' ); // blueprintPrimary
+          scene.background = new THREE.Color( textConfig.background.color );
 
           // Create camera
           camera = new THREE.PerspectiveCamera(
@@ -487,7 +551,7 @@
           accentLight.position.set( 0, 0, 10 );
           scene.add( accentLight );
 
-          // Create particle background
+          // Create particle background with custom settings
           createParticles();
 
           // Create text with TextGeometry
@@ -569,18 +633,10 @@
       };
 
       /**
-       * Show fallback text and hide loading indicator
-       */
-      const showFallback = () => {
-        fallback.style.zIndex = "1";
-        loadingIndicator.style.display = "none";
-      };
-
-      /**
-       * Create particle background
+       * Create particle background with custom settings
        */
       const createParticles = () => {
-        const particleCount = 1000;
+        const particleCount = textConfig.background.particleCount;
         const positions = new Float32Array( particleCount * 3 );
 
         for ( let i = 0; i < particleCount; i++ ) {
@@ -593,14 +649,22 @@
         geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
 
         const material = new THREE.PointsMaterial( {
-          color: 0xf7fafc, // BluePrintLightModeseasalt
-          size: 0.1,
+          color: textConfig.background.particleColor,
+          size: textConfig.background.particleSize,
           transparent: true,
-          opacity: 0.6
+          opacity: textConfig.background.particleOpacity
         } );
 
         particles = new THREE.Points( geometry, material );
         scene.add( particles );
+      };
+
+      /**
+       * Show fallback text and hide loading indicator
+       */
+      const showFallback = () => {
+        fallback.style.zIndex = "1";
+        loadingIndicator.style.display = "none";
       };
 
       /**
@@ -658,27 +722,29 @@
       };
 
       /**
-       * Common function to trigger explosion animation
+       * Common function to trigger explosion animation with custom strength
        */
       const triggerExplosion = () => {
         if ( animState.exploding ) return;
 
         animState.exploding = true;
         animState.startTime = Date.now();
+        const explosionStrength = textConfig.animation.explosionStrength;
+        const rotationStrength = textConfig.animation.rotationStrength;
 
         // Assign random velocities to each letter
         animState.meshes.forEach( mesh => {
-          // Create stronger explosion effect
+          // Create explosion effect with custom strength
           mesh.userData.velocity = {
-            x: ( Math.random() - 0.5 ) * 15,
-            y: ( Math.random() - 0.5 ) * 15,
-            z: ( Math.random() - 0.5 ) * 15
+            x: ( Math.random() - 0.5 ) * explosionStrength,
+            y: ( Math.random() - 0.5 ) * explosionStrength,
+            z: ( Math.random() - 0.5 ) * explosionStrength
           };
 
           mesh.userData.rotationVelocity = {
-            x: ( Math.random() - 0.5 ) * 3,
-            y: ( Math.random() - 0.5 ) * 3,
-            z: ( Math.random() - 0.5 ) * 3
+            x: ( Math.random() - 0.5 ) * rotationStrength,
+            y: ( Math.random() - 0.5 ) * rotationStrength,
+            z: ( Math.random() - 0.5 ) * rotationStrength
           };
 
           // If this mesh has children (letter mesh), ensure they're visible
@@ -719,7 +785,7 @@
           // Silently fail if audio isn't supported
         }
 
-        // Set timer to return
+        // Set timer to return based on custom duration
         setTimeout( () => {
           animState.exploding = false;
         }, animState.duration );
@@ -865,9 +931,20 @@
         // Add cleanup handler
         window.addEventListener( 'beforeunload', cleanup );
 
-        // Log setup result
+        // Log setup result and customization instructions
         if ( success ) {
           console.log( '3D scene initialized with TextGeometry. Click or tap to explode text.' );
+
+          // Show customization help in console
+          console.log( '%cCustomization Options', 'font-weight: bold; font-size: 14px; color: #0F79C6;' );
+          console.log( 'This page can be customized using URL parameters. Examples:' );
+          console.log( '• Change text: ?title=CUSTOM TITLE&subtitle=CUSTOM SUBTITLE' );
+          console.log( '• Change colors: ?titleColor=ff0000&subtitleColor=00ff00&attributionColor=0000ff&bgColor=000000' );
+          console.log( '• Change text size: ?titleSize=1.5&subtitleSize=1.0&attributionSize=0.5' );
+          console.log( '• Change positions: ?titleY=4&subtitleY=-1&attributionY=-6' );
+          console.log( '• Change particles: ?particleCount=2000&particleSize=0.2&particleColor=ff00ff' );
+          console.log( '• Change explosion: ?explosionStrength=20&explosionDuration=4000&rotationStrength=5' );
+          console.log( 'See README.md for more details and examples.' );
         } else {
           console.warn( '3D initialization failed. Using fallback display.' );
         }
@@ -880,3 +957,4 @@
 </body>
 
 </html>
+`
