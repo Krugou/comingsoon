@@ -4,21 +4,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blueprint Market - Coming Soon</title>
-  <meta name="description" content="Blueprint Market - Coming Soon 2025">
+  <title>Example Site - Coming Soon</title>
+  <meta name="description" content="Example Site - Coming Soon 2025">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            // Blueprint colors imported from main tailwind config
-            blueprintPrimary: '#242D38',  // BluePrintDarkModeraisin_black2
-            blueprintSecondary: '#0F79C6', // selected_dt
-            blueprintDark: '#080A0C',     // BluePrintDarkModenight
-            blueprintLight: '#f7fafc',    // BluePrintLightModeseasalt
-            blueprintAccent: '#fb7aae',   // BluePrintDarkModecyclamen
-            blueprintGray: '#637786',     // BluePrintDarkModeslate_gray
+            // Generic color scheme
+            primaryDark: '#242D38',
+            secondaryBlue: '#0F79C6',
+            darkBg: '#080A0C',
+            lightText: '#f7fafc',
+            accentPink: '#fb7aae',
+            grayText: '#637786',
           }
         },
         fontFamily: {
@@ -217,7 +217,6 @@
       margin: 0;
       overflow: hidden;
       background-color: #242D38;
-      /* BluePrintDarkModeraisin_black2 */
       font-family: 'Lexend Mega', sans-serif;
     }
 
@@ -251,13 +250,11 @@
       font-weight: 700;
       margin-bottom: 1rem;
       color: #fb7aae;
-      /* BluePrintDarkModecyclamen */
     }
 
     #fallback-container p {
       font-size: 1.5rem;
       color: #f7fafc;
-      /* BluePrintLightModeseasalt */
       font-weight: 500;
     }
 
@@ -268,7 +265,6 @@
       left: 50%;
       transform: translate(-50%, -50%);
       color: #f7fafc;
-      /* BluePrintLightModeseasalt */
       font-family: 'Lexend Mega', sans-serif;
       font-size: 1.5rem;
       text-align: center;
@@ -281,10 +277,8 @@
       width: 50px;
       height: 50px;
       border: 3px solid rgba(251, 122, 174, 0.3);
-      /* BluePrintDarkModecyclamen with opacity */
       border-radius: 50%;
       border-top-color: #fb7aae;
-      /* BluePrintDarkModecyclamen */
       animation: spin 1s ease-in-out infinite;
     }
 
@@ -307,9 +301,9 @@
 
   <!-- Fallback div in case 3D rendering fails -->
   <div id="fallback-container">
-    <h1 id="fallback-title">BLUEPRINT MARKET</h1>
+    <h1 id="fallback-title">EXAMPLE SITE</h1>
     <p id="fallback-subtitle">COMING SOON 2025</p>
-    <p id="fallback-attribution" class="mt-8 text-sm text-blueprintGray">TURBIINI X METROPOLIA</p>
+    <p id="fallback-attribution" class="mt-8 text-sm text-grayText">EXAMPLE COMPANY</p>
   </div>
 
   <script>
@@ -328,27 +322,27 @@
       // Default text configuration - will be used if no URL parameters are provided
       const defaultConfig = {
         title: {
-          text: "BLUEPRINT MARKET",
-          color: 0xfb7aae, // blueprintAccent
+          text: "EXAMPLE SITE",
+          color: 0xfb7aae, // accentPink
           size: 1.2,
           yPos: 3
         },
         subtitle: {
           text: "COMING SOON 2025",
-          color: 0xf7fafc, // blueprintLight
+          color: 0xf7fafc, // lightText
           size: 0.8,
           yPos: -2
         },
         attribution: {
-          text: "Turbiini & Metropolia university of applied sciences",
-          color: 0x637786, // blueprintGray
+          text: "Example Company & Partner Organization",
+          color: 0x637786, // grayText
           size: 0.4,
           yPos: -5.5
         },
         background: {
-          color: 0x242D38, // blueprintPrimary
+          color: 0x242D38, // primaryDark
           particleCount: 1000,
-          particleColor: 0xf7fafc, // blueprintLight
+          particleColor: 0xf7fafc, // lightText
           particleSize: 0.1,
           particleOpacity: 0.6
         },
@@ -547,7 +541,7 @@
           scene.add( directionalLight );
 
           // Add accent light for better text visibility
-          const accentLight = new THREE.PointLight( 0xfb7aae, 0.8 ); // blueprintAccent
+          const accentLight = new THREE.PointLight( 0xfb7aae, 0.8 ); // accentPink
           accentLight.position.set( 0, 0, 10 );
           scene.add( accentLight );
 
@@ -957,4 +951,3 @@
 </body>
 
 </html>
-`
