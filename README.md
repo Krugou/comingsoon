@@ -1,6 +1,6 @@
-# Blueprint Market - Coming Soon
+# Example Site - Coming Soon
 
-A 3D interactive "Coming Soon" page for Blueprint Market, featuring text that explodes when clicked, tapped, or when a key is pressed.
+A 3D interactive "Coming Soon" page featuring text that explodes when clicked, tapped, or when a key is pressed.
 
 ## Features
 
@@ -17,9 +17,9 @@ You can customize almost every aspect of the page by adding parameters to the UR
 
 ### Text Content
 
-- `title` - Main title text (default: "BLUEPRINT MARKET")
+- `title` - Main title text (default: "EXAMPLE SITE")
 - `subtitle` - Subtitle text (default: "COMING SOON 2025")
-- `attribution` - Attribution text (default: "Turbiini & Metropolia university of applied sciences")
+- `attribution` - Attribution text (default: "Example Company & Partner Organization")
 
 ### Text Appearance
 
@@ -86,12 +86,8 @@ The page requires WebGL support. For browsers without WebGL capabilities, a fall
 ## Development
 
 This project uses:
+
 - Three.js for 3D rendering
 - TextGeometry for 3D text
 - Tailwind CSS for styling
 - Vanilla JavaScript for interaction
-
-## Credits
-
-Created by Turbiini & Metropolia University of Applied Sciences.
-
