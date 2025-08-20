@@ -14,10 +14,10 @@
 
   <!-- TailwindCSS build -->
   <link rel="stylesheet" href="../dist/assets/styles.css">
-  
+
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@100..900&display=swap');
-    
+
     body {
       margin: 0;
       overflow: hidden;
@@ -45,29 +45,89 @@
 
     /* Custom animations since we can't rely on TailwindCSS CDN */
     @keyframes slideInLeft {
-      0% { transform: translateX(-100%); opacity: 0; }
-      100% { transform: translateX(0); opacity: 1; }
+      0% {
+        transform: translateX(-100%);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
     @keyframes slideInRight {
-      0% { transform: translateX(100%); opacity: 0; }
-      100% { transform: translateX(0); opacity: 1; }
+      0% {
+        transform: translateX(100%);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
     }
 
     @keyframes fadeIn {
-      0% { opacity: 0; }
-      100% { opacity: 1; }
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
     }
 
     @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 10px rgba(251, 122, 174, 0.3); }
-      50% { box-shadow: 0 0 20px rgba(251, 122, 174, 0.6); }
+
+      0%,
+      100% {
+        box-shadow: 0 0 10px rgba(251, 122, 174, 0.3);
+      }
+
+      50% {
+        box-shadow: 0 0 20px rgba(251, 122, 174, 0.6);
+      }
     }
 
     @keyframes bounceSubtle {
-      0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
-      40% { transform: translateY(-5px); }
-      60% { transform: translateY(-3px); }
+
+      0%,
+      20%,
+      50%,
+      80%,
+      100% {
+        transform: translateY(0);
+      }
+
+      40% {
+        transform: translateY(-5px);
+      }
+
+      60% {
+        transform: translateY(-3px);
+      }
+    }
+
+    @keyframes bounceIn {
+      0% {
+        transform: scale(0.6);
+        opacity: 0;
+      }
+
+      60% {
+        transform: scale(1.05);
+        opacity: 1;
+      }
+
+      80% {
+        transform: scale(0.97);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .animate-slide-in-left {
@@ -90,6 +150,10 @@
       animation: bounceSubtle 0.8s ease-out;
     }
 
+    .animate-bounce-in {
+      animation: bounceIn var(--chyron-anim-duration, 0.6s) cubic-bezier(.34, 1.56, .64, 1);
+    }
+
     .animation-delay-200 {
       animation-delay: 0.2s;
     }
@@ -99,72 +163,268 @@
     }
 
     /* Utility classes */
-    .relative { position: relative; }
-    .absolute { position: absolute; }
-    .fixed { position: fixed; }
-    .inset-0 { top: 0; right: 0; bottom: 0; left: 0; }
-    .left-0 { left: 0; }
-    .top-0 { top: 0; }
-    .bottom-0 { bottom: 0; }
-    .right-4 { right: 1rem; }
-    .left-4 { left: 1rem; }
-    .-right-2 { right: -0.5rem; }
-    .-right-1 { right: -0.25rem; }
-    .top-1\/2 { top: 50%; }
-    .w-1 { width: 0.25rem; }
-    .w-4 { width: 1rem; }
-    .w-2 { width: 0.5rem; }
-    .h-4 { height: 1rem; }
-    .h-2 { height: 0.5rem; }
-    .h-0\.5 { height: 0.125rem; }
-    .min-w-\[300px\] { min-width: 300px; }
-    .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-    .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-    .mb-1 { margin-bottom: 0.25rem; }
-    .mt-1 { margin-top: 0.25rem; }
-    .rounded-r-lg { border-top-right-radius: 0.5rem; border-bottom-right-radius: 0.5rem; }
-    .rounded-l-lg { border-top-left-radius: 0.5rem; border-bottom-left-radius: 0.5rem; }
-    .rounded-full { border-radius: 9999px; }
-    .border-l-4 { border-left-width: 4px; }
-    .transform { transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)); }
-    .-translate-y-1\/2 { --tw-translate-y: -50%; }
-    .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
-    .backdrop-blur-sm { backdrop-filter: blur(4px); }
-    .opacity-90 { opacity: 0.9; }
-    .opacity-70 { opacity: 0.7; }
+    .relative {
+      position: relative;
+    }
+
+    .absolute {
+      position: absolute;
+    }
+
+    .fixed {
+      position: fixed;
+    }
+
+    .inset-0 {
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    .left-0 {
+      left: 0;
+    }
+
+    .top-0 {
+      top: 0;
+    }
+
+    .bottom-0 {
+      bottom: 0;
+    }
+
+    .right-4 {
+      right: 1rem;
+    }
+
+    .left-4 {
+      left: 1rem;
+    }
+
+    .-right-2 {
+      right: -0.5rem;
+    }
+
+    .-right-1 {
+      right: -0.25rem;
+    }
+
+    .top-1\/2 {
+      top: 50%;
+    }
+
+    .w-1 {
+      width: 0.25rem;
+    }
+
+    .w-4 {
+      width: 1rem;
+    }
+
+    .w-2 {
+      width: 0.5rem;
+    }
+
+    .h-4 {
+      height: 1rem;
+    }
+
+    .h-2 {
+      height: 0.5rem;
+    }
+
+    .h-0\.5 {
+      height: 0.125rem;
+    }
+
+    .min-w-\[300px\] {
+      min-width: 300px;
+    }
+
+    .px-6 {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+
+    .py-4 {
+      padding-top: 1rem;
+      padding-bottom: 1rem;
+    }
+
+    .mb-1 {
+      margin-bottom: 0.25rem;
+    }
+
+    .mt-1 {
+      margin-top: 0.25rem;
+    }
+
+    .rounded-r-lg {
+      border-top-right-radius: 0.5rem;
+      border-bottom-right-radius: 0.5rem;
+    }
+
+    .rounded-l-lg {
+      border-top-left-radius: 0.5rem;
+      border-bottom-left-radius: 0.5rem;
+    }
+
+    .rounded-full {
+      border-radius: 9999px;
+    }
+
+    .border-l-4 {
+      border-left-width: 4px;
+    }
+
+    .transform {
+      transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y));
+    }
+
+    .-translate-y-1\/2 {
+      --tw-translate-y: -50%;
+    }
+
+    .shadow-2xl {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .backdrop-blur-sm {
+      backdrop-filter: blur(4px);
+    }
+
+    .opacity-90 {
+      opacity: 0.9;
+    }
+
+    .opacity-70 {
+      opacity: 0.7;
+    }
 
     /* Colors */
-    .bg-primaryDark { background-color: #242D38; }
-    .bg-secondaryBlue { background-color: #0F79C6; }
-    .bg-darkBg { background-color: #080A0C; }
-    .bg-accentPink { background-color: #fb7aae; }
-    .bg-transparent { background-color: transparent; }
-    .text-lightText { color: #f7fafc; }
-    .text-accentPink { color: #fb7aae; }
-    .text-grayText { color: #637786; }
-    .border-accentPink { border-color: #fb7aae; }
+    .bg-primaryDark {
+      background-color: #242D38;
+    }
+
+    .bg-secondaryBlue {
+      background-color: #0F79C6;
+    }
+
+    .bg-darkBg {
+      background-color: #080A0C;
+    }
+
+    .bg-accentPink {
+      background-color: #002ea2;
+    }
+
+    .bg-transparent {
+      background-color: transparent;
+    }
+
+    .text-lightText {
+      color: #f7fafc;
+    }
+
+    .text-accentPink {
+      color: #002ea2;
+    }
+
+    .text-grayText {
+      color: #637786;
+    }
+
+    .border-accentPink {
+      border-color: #002ea2;
+    }
 
     /* Background gradients */
-    .bg-gradient-to-r { background-image: linear-gradient(to right, var(--tw-gradient-stops)); }
-    .bg-gradient-to-b { background-image: linear-gradient(to bottom, var(--tw-gradient-stops)); }
-    .from-primaryDark { --tw-gradient-from: #242D38; --tw-gradient-to: rgba(36, 45, 56, 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
-    .via-secondaryBlue { --tw-gradient-to: rgba(15, 121, 198, 0); --tw-gradient-stops: var(--tw-gradient-from), #0F79C6, var(--tw-gradient-to); }
-    .to-primaryDark { --tw-gradient-to: #242D38; }
-    .from-accentPink { --tw-gradient-from: #fb7aae; --tw-gradient-to: rgba(251, 122, 174, 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
-    .to-secondaryBlue { --tw-gradient-to: #0F79C6; }
-    .from-darkBg\/80 { --tw-gradient-from: rgba(8, 10, 12, 0.8); --tw-gradient-to: rgba(8, 10, 12, 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
-    .to-primaryDark\/80 { --tw-gradient-to: rgba(36, 45, 56, 0.8); }
-    .from-transparent { --tw-gradient-from: transparent; --tw-gradient-to: rgba(0, 0, 0, 0); --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to); }
-    .via-accentPink { --tw-gradient-to: rgba(251, 122, 174, 0); --tw-gradient-stops: var(--tw-gradient-from), #fb7aae, var(--tw-gradient-to); }
-    .to-transparent { --tw-gradient-to: transparent; }
+    .bg-gradient-to-r {
+      background-image: linear-gradient(to right, var(--tw-gradient-stops));
+    }
+
+    .bg-gradient-to-b {
+      background-image: linear-gradient(to bottom, var(--tw-gradient-stops));
+    }
+
+    .from-primaryDark {
+      --tw-gradient-from: #242D38;
+      --tw-gradient-to: rgba(36, 45, 56, 0);
+      --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    }
+
+    .via-secondaryBlue {
+      --tw-gradient-to: rgba(15, 121, 198, 0);
+      --tw-gradient-stops: var(--tw-gradient-from), #0F79C6, var(--tw-gradient-to);
+    }
+
+    .to-primaryDark {
+      --tw-gradient-to: #242D38;
+    }
+
+    .from-accentPink {
+      --tw-gradient-from: #002ea2;
+      --tw-gradient-to: rgba(251, 122, 174, 0);
+      --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    }
+
+    .to-secondaryBlue {
+      --tw-gradient-to: #0F79C6;
+    }
+
+    .from-darkBg\/80 {
+      --tw-gradient-from: rgba(8, 10, 12, 0.8);
+      --tw-gradient-to: rgba(8, 10, 12, 0);
+      --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    }
+
+    .to-primaryDark\/80 {
+      --tw-gradient-to: rgba(36, 45, 56, 0.8);
+    }
+
+    .from-transparent {
+      --tw-gradient-from: transparent;
+      --tw-gradient-to: rgba(0, 0, 0, 0);
+      --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
+    }
+
+    .via-accentPink {
+      --tw-gradient-to: rgba(251, 122, 174, 0);
+      --tw-gradient-stops: var(--tw-gradient-from), #002ea2, var(--tw-gradient-to);
+    }
+
+    .to-transparent {
+      --tw-gradient-to: transparent;
+    }
 
     /* Typography */
-    .font-bold { font-weight: 700; }
-    .font-medium { font-weight: 500; }
-    .font-normal { font-weight: 400; }
-    .text-xl { font-size: 1.25rem; line-height: 1.75rem; }
-    .text-sm { font-size: 0.875rem; line-height: 1.25rem; }
-    .text-xs { font-size: 0.75rem; line-height: 1rem; }
+    .font-bold {
+      font-weight: 700;
+    }
+
+    .font-medium {
+      font-weight: 500;
+    }
+
+    .font-normal {
+      font-weight: 400;
+    }
+
+    .text-xl {
+      font-size: 1.25rem;
+      line-height: 1.75rem;
+    }
+
+    .text-sm {
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+    }
+
+    .text-xs {
+      font-size: 0.75rem;
+      line-height: 1rem;
+    }
   </style>
 </head>
 
@@ -174,24 +434,28 @@
     <!-- Main container with gradient background -->
     <div class="relative">
       <!-- Background with gradient and glow effect -->
-      <div class="absolute inset-0 bg-gradient-to-r from-primaryDark via-secondaryBlue to-primaryDark rounded-r-lg opacity-90 animate-pulse-glow"></div>
-      
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-primaryDark via-secondaryBlue to-primaryDark rounded-r-lg opacity-90 animate-pulse-glow">
+      </div>
+
       <!-- Left accent bar -->
-      <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-accentPink to-secondaryBlue rounded-l-lg"></div>
-      
+      <div class="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-accentPink to-secondaryBlue rounded-l-lg">
+      </div>
+
       <!-- Content container -->
-      <div class="relative bg-gradient-to-r from-darkBg/80 to-primaryDark/80 backdrop-blur-sm rounded-r-lg border-l-4 border-accentPink shadow-2xl">
+      <div
+        class="relative bg-gradient-to-r from-darkBg/80 to-primaryDark/80 backdrop-blur-sm rounded-r-lg border-l-4 border-accentPink shadow-2xl">
         <div class="px-6 py-4 min-w-[300px]">
           <!-- Name -->
           <div id="chyron-name" class="text-lightText font-bold text-xl mb-1 animate-slide-in-left">
             John Smith
           </div>
-          
+
           <!-- Title/Position -->
           <div id="chyron-title" class="text-accentPink font-medium text-sm animate-slide-in-right animation-delay-200">
             Software Engineer
           </div>
-          
+
           <!-- Company/Organization (optional) -->
           <div id="chyron-company" class="text-grayText font-normal text-xs mt-1 animate-fade-in animation-delay-400">
             Tech Corporation
@@ -199,22 +463,28 @@
         </div>
 
         <!-- Animated accent elements -->
-        <div class="absolute -right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-accentPink rounded-full animate-bounce-subtle"></div>
-        <div class="absolute -right-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-secondaryBlue rounded-full animate-bounce-subtle animation-delay-200"></div>
+        <div
+          class="absolute -right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 bg-accentPink rounded-full animate-bounce-subtle">
+        </div>
+        <div
+          class="absolute -right-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-secondaryBlue rounded-full animate-bounce-subtle animation-delay-200">
+        </div>
       </div>
 
       <!-- Bottom highlight line -->
-      <div class="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-transparent via-accentPink to-transparent opacity-70"></div>
+      <div
+        class="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-transparent via-accentPink to-transparent opacity-70">
+      </div>
     </div>
   </div>
 
   <!-- NodeCG integration script -->
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const chyronElement = document.getElementById('name-tag-chyron');
-      const nameElement = document.getElementById('chyron-name');
-      const titleElement = document.getElementById('chyron-title');
-      const companyElement = document.getElementById('chyron-company');
+    document.addEventListener( 'DOMContentLoaded', () => {
+      const chyronElement = document.getElementById( 'name-tag-chyron' );
+      const nameElement = document.getElementById( 'chyron-name' );
+      const titleElement = document.getElementById( 'chyron-title' );
+      const companyElement = document.getElementById( 'chyron-company' );
 
       // Default configuration
       let chyronConfig = {
@@ -222,102 +492,136 @@
         title: 'Software Engineer',
         company: 'Tech Corporation',
         visible: false,
-        animation: 'slide-in'
+        showName: true,
+        showTitle: true,
+        showCompany: true,
+        animation: 'slide-in',
+        duration: 600
       };
 
-      // Animation functions
+      const animationClassSets = {
+        'slide-in': ( step ) => ( {
+          name: 'animate-slide-in-left',
+          title: 'animate-slide-in-right',
+          company: 'animate-fade-in'
+        } ),
+        'fade-in': () => ( {
+          name: 'animate-fade-in',
+          title: 'animate-fade-in',
+          company: 'animate-fade-in'
+        } ),
+        'bounce-in': () => ( {
+          name: 'animate-bounce-in',
+          title: 'animate-bounce-in',
+          company: 'animate-bounce-in'
+        } )
+      };
+
+      const clearAnimationClasses = ( el ) => {
+        el.classList.remove( 'animate-slide-in-left', 'animate-slide-in-right', 'animate-fade-in', 'animate-bounce-in' );
+      };
+
+      const applyElementVisibility = () => {
+        nameElement.style.display = chyronConfig.showName === false ? 'none' : '';
+        titleElement.style.display = chyronConfig.showTitle === false ? 'none' : '';
+        companyElement.style.display = chyronConfig.showCompany === false || !chyronConfig.company ? 'none' : '';
+      };
+
+      const applyAnimation = () => {
+        const set = ( animationClassSets[ chyronConfig.animation ] || animationClassSets[ 'slide-in' ] )();
+        // Duration variable
+        const durMs = Math.max( 100, parseInt( chyronConfig.duration || 600 ) );
+        chyronElement.style.setProperty( '--chyron-anim-duration', durMs + 'ms' );
+        [ nameElement, titleElement, companyElement ].forEach( clearAnimationClasses );
+        if ( chyronConfig.showName !== false ) nameElement.classList.add( set.name );
+        if ( chyronConfig.showTitle !== false ) titleElement.classList.add( set.title );
+        if ( chyronConfig.showCompany !== false && chyronConfig.company ) companyElement.classList.add( set.company );
+      };
+
       const showChyron = () => {
-        chyronElement.classList.remove('chyron-hidden');
-        chyronElement.classList.add('chyron-visible');
-        
-        // Trigger CSS animations by re-adding animation classes
-        setTimeout(() => {
-          nameElement.classList.add('animate-slide-in-left');
-          titleElement.classList.add('animate-slide-in-right');
-          companyElement.classList.add('animate-fade-in');
-        }, 100);
+        chyronElement.classList.remove( 'chyron-hidden' );
+        chyronElement.classList.add( 'chyron-visible' );
+        // Re-trigger animations
+        setTimeout( () => {
+          applyAnimation();
+        }, 30 );
       };
 
       const hideChyron = () => {
-        chyronElement.classList.remove('chyron-visible');
-        chyronElement.classList.add('chyron-hidden');
+        chyronElement.classList.remove( 'chyron-visible' );
+        chyronElement.classList.add( 'chyron-hidden' );
       };
 
-      const updateContent = (config) => {
-        if (config.name !== undefined) {
-          nameElement.textContent = config.name;
-        }
-        if (config.title !== undefined) {
-          titleElement.textContent = config.title;
-        }
-        if (config.company !== undefined) {
-          companyElement.textContent = config.company;
-          companyElement.style.display = config.company ? 'block' : 'none';
-        }
+      const updateContent = ( config ) => {
+        if ( config.name !== undefined ) nameElement.textContent = config.name;
+        if ( config.title !== undefined ) titleElement.textContent = config.title;
+        if ( config.company !== undefined ) companyElement.textContent = config.company;
+        applyElementVisibility();
       };
 
       // NodeCG integration
-      if (typeof nodecg !== 'undefined') {
-        console.log('NodeCG detected, setting up replicants');
-        
-        const chyronReplicant = nodecg.Replicant('nameTagChyron');
-        
-        chyronReplicant.on('change', (newVal) => {
-          if (newVal) {
-            console.log('Chyron config changed:', newVal);
+      if ( typeof nodecg !== 'undefined' ) {
+        console.log( 'NodeCG detected, setting up replicants' );
+
+        const chyronReplicant = nodecg.Replicant( 'nameTagChyron' );
+
+        chyronReplicant.on( 'change', ( newVal ) => {
+          if ( newVal ) {
+            console.log( 'Chyron config changed:', newVal );
             chyronConfig = { ...chyronConfig, ...newVal };
-            
-            updateContent(chyronConfig);
-            
-            if (chyronConfig.visible) {
+
+            updateContent( chyronConfig );
+
+            if ( chyronConfig.visible ) {
               showChyron();
             } else {
               hideChyron();
             }
           }
-        });
+        } );
 
         // Initialize with default values if no replicant exists
-        setTimeout(() => {
-          if (!chyronReplicant.value) {
+        setTimeout( () => {
+          if ( !chyronReplicant.value ) {
             chyronReplicant.value = chyronConfig;
           }
-        }, 100);
+        }, 100 );
       } else {
-        console.log('NodeCG not detected, running in standalone mode');
-        
+        console.log( 'NodeCG not detected, running in standalone mode' );
+
         // Demo mode - cycle through showing/hiding for demonstration
-        setTimeout(() => {
+        setTimeout( () => {
           showChyron();
-        }, 1000);
+        }, 1000 );
 
         // Hide after 5 seconds in demo mode
-        setTimeout(() => {
+        setTimeout( () => {
           hideChyron();
-        }, 6000);
+        }, 6000 );
 
         // Show again after 8 seconds with different content
-        setTimeout(() => {
-          updateContent({
+        setTimeout( () => {
+          updateContent( {
             name: 'Jane Doe',
             title: 'Product Manager',
             company: 'Innovation Labs'
-          });
+          } );
           showChyron();
-        }, 8000);
+        }, 8000 );
       }
 
       // Keyboard shortcuts for testing
-      document.addEventListener('keydown', (event) => {
-        if (event.key === 'c') {
-          if (chyronElement.classList.contains('chyron-visible')) {
-            hideChyron();
-          } else {
+      document.addEventListener( 'keydown', ( event ) => {
+        if ( event.key === 'c' ) {
+          chyronConfig.visible = !chyronConfig.visible;
+          if ( chyronConfig.visible ) {
             showChyron();
+          } else {
+            hideChyron();
           }
         }
-      });
-    });
+      } );
+    } );
   </script>
 </body>
 

@@ -27,6 +27,18 @@ module.exports = function (nodecg) {
     default: { lastExplode: 0 }
   });
 
+  // Add replicant for chyron (dashboard + graphic)
+  const nameTagChyron = nodecg.Replicant('nameTagChyron', {
+    persistent: true,
+    default: {
+      name: 'John Smith',
+      title: 'Software Engineer',
+      company: 'Tech Corporation',
+      visible: false,
+      animation: 'slide-in'
+    }
+  });
+
   nodecg.listenFor('explodeScene', (data, ack) => {
     sceneAction.value = { lastExplode: Date.now() };
     nodecg.log.info('[comingsoon] Explosion trigger sent');
@@ -42,6 +54,15 @@ module.exports = function (nodecg) {
       nodecg.log.error(e);
       if (ack && !ack.handled) ack(e);
     }
+  });
+
+  // Optional: message to toggle visibility
+  nodecg.listenFor('toggleChyron', (data, ack) => {
+    nameTagChyron.value = {
+      ...nameTagChyron.value,
+      visible: data?.visible ?? !nameTagChyron.value.visible
+    };
+    if (ack && !ack.handled) ack(null, { ok: true });
   });
 
   nodecg.log.info('[comingsoon] Extension ready');

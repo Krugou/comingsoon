@@ -14,7 +14,7 @@ export default {
         secondaryBlue: '#0F79C6',
         darkBg: '#080A0C',
         lightText: '#f7fafc',
-        accentPink: '#fb7aae',
+        accentPink: '#002ea2',
         grayText: '#637786',
       }
     },
