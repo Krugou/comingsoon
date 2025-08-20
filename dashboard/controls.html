@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coming Soon Controls</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #f5f5f5;
+    }
+
+    .control-section {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .control-section h3 {
+      margin: 0 0 12px 0;
+      color: #333;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .form-group input, .form-group select {
+      padding: 6px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .form-group input[type="color"] {
+      height: 32px;
+      padding: 2px;
+    }
+
+    .btn {
+      background: #fb7aae;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #e6659a;
+    }
+
+    .btn-secondary {
+      background: #6c757d;
+    }
+
+    .btn-secondary:hover {
+      background: #545b62;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .color-input-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .color-input-group input[type="text"] {
+      flex: 1;
+      font-family: monospace;
+    }
+
+    .range-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .range-group input[type="range"] {
+      flex: 1;
+    }
+
+    .range-group span {
+      min-width: 40px;
+      font-size: 12px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="control-section">
+    <h3>Quick Actions</h3>
+    <button id="explode-btn" class="btn">Trigger Explosion</button>
+    <div class="btn-group">
+      <button id="reset-btn" class="btn btn-secondary">Reset to Defaults</button>
+    </div>
+  </div>
+
+  <div class="control-section">
+    <h3>Text Content</h3>
+    <div class="form-group">
+      <label for="title-text">Title</label>
+      <input type="text" id="title-text" placeholder="EXAMPLE SITE">
+    </div>
+    <div class="form-group">
+      <label for="subtitle-text">Subtitle</label>
+      <input type="text" id="subtitle-text" placeholder="COMING SOON 2025">
+    </div>
+    <div class="form-group">
+      <label for="attribution-text">Attribution</label>
+      <input type="text" id="attribution-text" placeholder="Example Company & Partner Organization">
+    </div>
+  </div>
+
+  <div class="control-section">
+    <h3>Text Colors</h3>
+    <div class="form-group">
+      <label for="title-color">Title Color</label>
+      <div class="color-input-group">
+        <input type="color" id="title-color" value="#fb7aae">
+        <input type="text" id="title-color-text" placeholder="fb7aae">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="subtitle-color">Subtitle Color</label>
+      <div class="color-input-group">
+        <input type="color" id="subtitle-color" value="#f7fafc">
+        <input type="text" id="subtitle-color-text" placeholder="f7fafc">
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="attribution-color">Attribution Color</label>
+      <div class="color-input-group">
+        <input type="color" id="attribution-color" value="#637786">
+        <input type="text" id="attribution-color-text" placeholder="637786">
+      </div>
+    </div>
+  </div>
+
+  <div class="control-section">
+    <h3>Text Sizes</h3>
+    <div class="form-group">
+      <label for="title-size">Title Size</label>
+      <div class="range-group">
+        <input type="range" id="title-size" min="0.5" max="3" step="0.1" value="1.2">
+        <span id="title-size-value">1.2</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="subtitle-size">Subtitle Size</label>
+      <div class="range-group">
+        <input type="range" id="subtitle-size" min="0.3" max="2" step="0.1" value="0.8">
+        <span id="subtitle-size-value">0.8</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="attribution-size">Attribution Size</label>
+      <div class="range-group">
+        <input type="range" id="attribution-size" min="0.2" max="1" step="0.1" value="0.4">
+        <span id="attribution-size-value">0.4</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="control-section">
+    <h3>Animation</h3>
+    <div class="form-group">
+      <label for="explosion-duration">Explosion Duration (ms)</label>
+      <div class="range-group">
+        <input type="range" id="explosion-duration" min="1000" max="10000" step="500" value="6000">
+        <span id="explosion-duration-value">6000</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="explosion-strength">Explosion Strength</label>
+      <div class="range-group">
+        <input type="range" id="explosion-strength" min="5" max="50" step="1" value="15">
+        <span id="explosion-strength-value">15</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Initialize NodeCG replicants
+    const configReplicant = nodecg.Replicant('sceneConfig');
+    const explosionReplicant = nodecg.Replicant('triggerExplosion', { defaultValue: { trigger: false } });
+
+    // UI Elements
+    const elements = {
+      explodeBtn: document.getElementById('explode-btn'),
+      resetBtn: document.getElementById('reset-btn'),
+      titleText: document.getElementById('title-text'),
+      subtitleText: document.getElementById('subtitle-text'),
+      attributionText: document.getElementById('attribution-text'),
+      titleColor: document.getElementById('title-color'),
+      titleColorText: document.getElementById('title-color-text'),
+      subtitleColor: document.getElementById('subtitle-color'),
+      subtitleColorText: document.getElementById('subtitle-color-text'),
+      attributionColor: document.getElementById('attribution-color'),
+      attributionColorText: document.getElementById('attribution-color-text'),
+      titleSize: document.getElementById('title-size'),
+      titleSizeValue: document.getElementById('title-size-value'),
+      subtitleSize: document.getElementById('subtitle-size'),
+      subtitleSizeValue: document.getElementById('subtitle-size-value'),
+      attributionSize: document.getElementById('attribution-size'),
+      attributionSizeValue: document.getElementById('attribution-size-value'),
+      explosionDuration: document.getElementById('explosion-duration'),
+      explosionDurationValue: document.getElementById('explosion-duration-value'),
+      explosionStrength: document.getElementById('explosion-strength'),
+      explosionStrengthValue: document.getElementById('explosion-strength-value')
+    };
+
+    // Default configuration
+    const defaultConfig = {
+      title: { text: "EXAMPLE SITE", color: 0xfb7aae, size: 1.2, yPos: 3 },
+      subtitle: { text: "COMING SOON 2025", color: 0xf7fafc, size: 0.8, yPos: -2 },
+      attribution: { text: "Example Company & Partner Organization", color: 0x637786, size: 0.4, yPos: -5.5 },
+      background: { color: 0x242D38, particleCount: 1000, particleColor: 0xf7fafc, particleSize: 0.1, particleOpacity: 0.6 },
+      animation: { explosionDuration: 6000, explosionStrength: 15, rotationStrength: 3 }
+    };
+
+    // Utility functions
+    function hexToNumber(hex) {
+      return parseInt(hex.replace('#', ''), 16);
+    }
+
+    function numberToHex(num) {
+      return '#' + num.toString(16).padStart(6, '0');
+    }
+
+    function updateConfig() {
+      const config = {
+        title: {
+          text: elements.titleText.value || defaultConfig.title.text,
+          color: hexToNumber(elements.titleColor.value),
+          size: parseFloat(elements.titleSize.value),
+          yPos: defaultConfig.title.yPos
+        },
+        subtitle: {
+          text: elements.subtitleText.value || defaultConfig.subtitle.text,
+          color: hexToNumber(elements.subtitleColor.value),
+          size: parseFloat(elements.subtitleSize.value),
+          yPos: defaultConfig.subtitle.yPos
+        },
+        attribution: {
+          text: elements.attributionText.value || defaultConfig.attribution.text,
+          color: hexToNumber(elements.attributionColor.value),
+          size: parseFloat(elements.attributionSize.value),
+          yPos: defaultConfig.attribution.yPos
+        },
+        background: defaultConfig.background,
+        animation: {
+          explosionDuration: parseInt(elements.explosionDuration.value),
+          explosionStrength: parseInt(elements.explosionStrength.value),
+          rotationStrength: defaultConfig.animation.rotationStrength
+        }
+      };
+
+      configReplicant.value = config;
+    }
+
+    function loadConfigToUI(config) {
+      if (!config) return;
+
+      elements.titleText.value = config.title?.text || '';
+      elements.subtitleText.value = config.subtitle?.text || '';
+      elements.attributionText.value = config.attribution?.text || '';
+
+      if (config.title?.color !== undefined) {
+        const hex = numberToHex(config.title.color);
+        elements.titleColor.value = hex;
+        elements.titleColorText.value = hex.substring(1);
+      }
+
+      if (config.subtitle?.color !== undefined) {
+        const hex = numberToHex(config.subtitle.color);
+        elements.subtitleColor.value = hex;
+        elements.subtitleColorText.value = hex.substring(1);
+      }
+
+      if (config.attribution?.color !== undefined) {
+        const hex = numberToHex(config.attribution.color);
+        elements.attributionColor.value = hex;
+        elements.attributionColorText.value = hex.substring(1);
+      }
+
+      if (config.title?.size !== undefined) {
+        elements.titleSize.value = config.title.size;
+        elements.titleSizeValue.textContent = config.title.size;
+      }
+
+      if (config.subtitle?.size !== undefined) {
+        elements.subtitleSize.value = config.subtitle.size;
+        elements.subtitleSizeValue.textContent = config.subtitle.size;
+      }
+
+      if (config.attribution?.size !== undefined) {
+        elements.attributionSize.value = config.attribution.size;
+        elements.attributionSizeValue.textContent = config.attribution.size;
+      }
+
+      if (config.animation?.explosionDuration !== undefined) {
+        elements.explosionDuration.value = config.animation.explosionDuration;
+        elements.explosionDurationValue.textContent = config.animation.explosionDuration;
+      }
+
+      if (config.animation?.explosionStrength !== undefined) {
+        elements.explosionStrength.value = config.animation.explosionStrength;
+        elements.explosionStrengthValue.textContent = config.animation.explosionStrength;
+      }
+    }
+
+    // Event listeners
+    elements.explodeBtn.addEventListener('click', () => {
+      explosionReplicant.value = { trigger: true };
+    });
+
+    elements.resetBtn.addEventListener('click', () => {
+      loadConfigToUI(defaultConfig);
+      updateConfig();
+    });
+
+    // Text inputs
+    elements.titleText.addEventListener('input', updateConfig);
+    elements.subtitleText.addEventListener('input', updateConfig);
+    elements.attributionText.addEventListener('input', updateConfig);
+
+    // Color inputs
+    elements.titleColor.addEventListener('change', (e) => {
+      elements.titleColorText.value = e.target.value.substring(1);
+      updateConfig();
+    });
+    elements.titleColorText.addEventListener('input', (e) => {
+      elements.titleColor.value = '#' + e.target.value;
+      updateConfig();
+    });
+
+    elements.subtitleColor.addEventListener('change', (e) => {
+      elements.subtitleColorText.value = e.target.value.substring(1);
+      updateConfig();
+    });
+    elements.subtitleColorText.addEventListener('input', (e) => {
+      elements.subtitleColor.value = '#' + e.target.value;
+      updateConfig();
+    });
+
+    elements.attributionColor.addEventListener('change', (e) => {
+      elements.attributionColorText.value = e.target.value.substring(1);
+      updateConfig();
+    });
+    elements.attributionColorText.addEventListener('input', (e) => {
+      elements.attributionColor.value = '#' + e.target.value;
+      updateConfig();
+    });
+
+    // Range inputs
+    elements.titleSize.addEventListener('input', (e) => {
+      elements.titleSizeValue.textContent = e.target.value;
+      updateConfig();
+    });
+
+    elements.subtitleSize.addEventListener('input', (e) => {
+      elements.subtitleSizeValue.textContent = e.target.value;
+      updateConfig();
+    });
+
+    elements.attributionSize.addEventListener('input', (e) => {
+      elements.attributionSizeValue.textContent = e.target.value;
+      updateConfig();
+    });
+
+    elements.explosionDuration.addEventListener('input', (e) => {
+      elements.explosionDurationValue.textContent = e.target.value;
+      updateConfig();
+    });
+
+    elements.explosionStrength.addEventListener('input', (e) => {
+      elements.explosionStrengthValue.textContent = e.target.value;
+      updateConfig();
+    });
+
+    // Initialize from replicant
+    configReplicant.on('change', (newValue) => {
+      if (newValue) {
+        loadConfigToUI(newValue);
+      }
+    });
+
+    // Load default configuration on startup
+    setTimeout(() => {
+      if (!configReplicant.value) {
+        configReplicant.value = defaultConfig;
+      }
+    }, 100);
+  </script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "comingsoon",
+  "version": "1.0.0",
+  "description": "A 3D interactive Coming Soon page with exploding text animations",
+  "nodecg": {
+    "compatibleRange": "^2.0.0",
+    "dashboardPanels": [
+      {
+        "name": "controls",
+        "title": "Coming Soon Controls",
+        "width": 3,
+        "file": "dashboard/controls.html",
+        "headerColor": "#fb7aae"
+      }
+    ],
+    "graphics": [
+      {
+        "file": "graphics/index.html",
+        "width": 1920,
+        "height": 1080
+      }
+    ]
+  }
+}
