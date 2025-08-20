@@ -15,7 +15,31 @@ A 3D interactive "Coming Soon" page featuring text that explodes when clicked, t
 
 ## Installation & Setup
 
-### For NodeCG Bundle
+### Quick Start with NodeCG
+
+The easiest way to get started is to run NodeCG directly from this repository:
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Start NodeCG:**
+   ```bash
+   npm start
+   ```
+
+3. **Access the graphics:**
+   - Graphics: `http://localhost:9090/bundles/comingsoon/graphics/`
+   - NodeCG Dashboard: `http://localhost:9090/dashboard/`
+
+This automatically sets up a local NodeCG instance with the comingsoon bundle ready to use.
+
+> **Note:** The current quick-start setup includes graphics functionality. Dashboard panels are available when using an existing NodeCG installation due to file path resolution requirements.
+
+### For Existing NodeCG Installation
+
+If you have an existing NodeCG installation and want to add this as a bundle:
 
 1. **Install dependencies:**
    ```bash

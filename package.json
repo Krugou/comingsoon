@@ -8,8 +8,9 @@
     "dev": "vite",
     "preview": "vite preview",
     "standalone": "python3 -m http.server 8000",
-    "nodecg": "cd nodecg_instance && nodecg start",
-    "start": "cd nodecg_instance && nodecg start"
+    "nodecg": "./scripts/start-nodecg-simple.sh",
+    "start": "./scripts/start-nodecg-simple.sh",
+    "test": "./test.sh"
   },
   "keywords": ["nodecg", "three.js", "coming-soon", "3d", "graphics"],
   "author": "",
