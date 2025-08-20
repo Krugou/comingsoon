@@ -122,7 +122,7 @@ You can customize the standalone version using URL parameters:
 
 #### Text Appearance
 
-- `titleColor` - Hex color for the title (default: "fb7aae")
+- `titleColor` - Hex color for the title (default: "002ea2")
 - `subtitleColor` - Hex color for the subtitle (default: "f7fafc")
 - `attributionColor` - Hex color for the attribution (default: "637786")
 - `titleSize` - Size of the title text (default: 1.2)

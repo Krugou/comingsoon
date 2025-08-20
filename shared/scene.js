@@ -15,7 +15,7 @@ export class ComingSoonScene {
   constructor(container, config = {}) {
     this.container = container;
     this.config = this.mergeConfig(config);
-    
+
     // Scene components
     this.scene = null;
     this.camera = null;
@@ -25,7 +25,7 @@ export class ComingSoonScene {
     this.particles = null;
     this.animationId = null;
     this.clock = new THREE.Clock();
-    
+
     // Animation state
     this.animState = {
       exploding: false,
@@ -35,7 +35,7 @@ export class ComingSoonScene {
       originalPositions: [],
       originalRotations: []
     };
-    
+
     // Event handlers
     this.handleResize = this.handleResize.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -47,7 +47,7 @@ export class ComingSoonScene {
     const defaultConfig = {
       title: {
         text: "EXAMPLE SITE",
-        color: 0xfb7aae,
+        color: 0x002ea2,
         size: 1.2,
         yPos: 3
       },
@@ -76,7 +76,7 @@ export class ComingSoonScene {
         rotationStrength: 3
       }
     };
-    
+
     return this.deepMerge(defaultConfig, userConfig);
   }
 
@@ -135,7 +135,7 @@ export class ComingSoonScene {
       this.scene.add(directionalLight);
 
       // Add accent light for better text visibility
-      const accentLight = new THREE.PointLight(0xfb7aae, 0.8);
+      const accentLight = new THREE.PointLight(0x002ea2, 0.8);
       accentLight.position.set(0, 0, 10);
       this.scene.add(accentLight);
 
@@ -237,37 +237,37 @@ export class ComingSoonScene {
     // In a real implementation, you'd load fonts and use TextGeometry
     const group = new THREE.Group();
     const meshes = [];
-    
+
     const spacing = size * 1.2;
     let xPos = -(text.length * spacing) / 2;
-    
+
     const material = new THREE.MeshLambertMaterial({ color: color });
-    
+
     for (let i = 0; i < text.length; i++) {
       const char = text[i];
-      
+
       if (char === ' ') {
         xPos += spacing;
         continue;
       }
-      
+
       const cube = new THREE.Mesh(
         new THREE.BoxGeometry(size, size, size * 0.5),
         material.clone()
       );
-      
+
       cube.position.set(xPos, yPos, 0);
       cube.userData = {
         isLetter: true,
         originalPosition: { x: xPos, y: yPos, z: 0 },
         originalRotation: { x: 0, y: 0, z: 0 }
       };
-      
+
       group.add(cube);
       meshes.push(cube);
       xPos += spacing;
     }
-    
+
     this.scene.add(group);
     return { group, meshes, textMesh: null };
   }
@@ -275,7 +275,7 @@ export class ComingSoonScene {
   saveOriginalPositions() {
     this.animState.originalPositions = [];
     this.animState.originalRotations = [];
-    
+
     this.animState.meshes.forEach(mesh => {
       this.animState.originalPositions.push({
         x: mesh.position.x,
@@ -292,7 +292,7 @@ export class ComingSoonScene {
 
   triggerExplosion() {
     if (this.animState.exploding) return;
-    
+
     this.animState.exploding = true;
     this.animState.startTime = this.clock.getElapsedTime() * 1000;
     this.animState.duration = this.config.animation.explosionDuration;
@@ -300,18 +300,18 @@ export class ComingSoonScene {
 
   animate(timestamp) {
     this.animationId = requestAnimationFrame(this.animate);
-    
+
     // Update particles
     if (this.particles) {
       this.particles.rotation.y += 0.001;
     }
-    
+
     // Handle explosion animation
     if (this.animState.exploding) {
       const currentTime = this.clock.getElapsedTime() * 1000;
       const elapsed = currentTime - this.animState.startTime;
       const progress = Math.min(elapsed / this.animState.duration, 1);
-      
+
       if (progress >= 1) {
         // Reset explosion
         this.animState.exploding = false;
@@ -325,17 +325,17 @@ export class ComingSoonScene {
           const original = this.animState.originalPositions[index];
           const strength = this.config.animation.explosionStrength;
           const rotation = this.config.animation.rotationStrength;
-          
+
           const randomX = (Math.random() - 0.5) * strength * progress;
           const randomY = (Math.random() - 0.5) * strength * progress;
           const randomZ = (Math.random() - 0.5) * strength * progress;
-          
+
           mesh.position.set(
             original.x + randomX,
             original.y + randomY,
             original.z + randomZ
           );
-          
+
           mesh.rotation.set(
             Math.random() * rotation * progress,
             Math.random() * rotation * progress,
@@ -344,7 +344,7 @@ export class ComingSoonScene {
         });
       }
     }
-    
+
     // Render scene
     if (this.renderer && this.scene && this.camera) {
       try {
@@ -376,7 +376,7 @@ export class ComingSoonScene {
   updateConfig(newConfig) {
     this.config = this.mergeConfig(newConfig);
     this.animState.duration = this.config.animation.explosionDuration;
-    
+
     // Update scene background
     if (this.scene) {
       this.scene.background = new THREE.Color(this.config.background.color);
@@ -385,7 +385,7 @@ export class ComingSoonScene {
 
   dispose() {
     if (this.animationId) cancelAnimationFrame(this.animationId);
-    
+
     // Remove event listeners
     window.removeEventListener('resize', this.handleResize);
     window.removeEventListener('keydown', this.handleKeydown);
@@ -393,7 +393,7 @@ export class ComingSoonScene {
       this.renderer.domElement.removeEventListener('click', this.handleClick);
       this.renderer.domElement.removeEventListener('touchstart', this.handleClick);
     }
-    
+
     // Dispose of geometries and materials
     if (this.scene) {
       this.scene.traverse(object => {
@@ -407,7 +407,7 @@ export class ComingSoonScene {
         }
       });
     }
-    
+
     // Dispose of renderer
     if (this.renderer) {
       this.renderer.dispose();
