@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Coming Soon - NodeCG Graphics</title>
   <meta name="description" content="Coming Soon 3D Graphics for NodeCG">
-  
+
   <!-- Add Lexend Mega font from Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@100..900&display=swap" rel="stylesheet">
-  
+
   <style>
     body {
       margin: 0;
@@ -70,7 +71,18 @@
       z-index: 100;
     }
   </style>
+
+  <!-- Added import map for three -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.168.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.168.0/examples/jsm/"
+    }
+  }
+  </script>
 </head>
+
 <body>
   <!-- Loading indicator -->
   <div id="loading-indicator">Loading 3D Scene...</div>
@@ -82,65 +94,67 @@
   <div id="fallback-container">
     <h1 id="fallback-title">EXAMPLE SITE</h1>
     <p id="fallback-subtitle">COMING SOON 2025</p>
-    <p id="fallback-attribution" style="margin-top: 2rem; font-size: 0.875rem; color: #637786;">Example Company & Partner Organization</p>
+    <p id="fallback-attribution" style="margin-top: 2rem; font-size: 0.875rem; color: #637786;">Example Company &
+      Partner Organization</p>
   </div>
 
   <script type="module">
     import { ComingSoonScene } from '../shared/scene.js';
     import { parseUrlConfig, showFallback } from '../shared/utils.js';
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      const container = document.getElementById('scene-container');
-      const loadingIndicator = document.getElementById('loading-indicator');
-      
+    document.addEventListener( 'DOMContentLoaded', async () => {
+      const container = document.getElementById( 'scene-container' );
+      const loadingIndicator = document.getElementById( 'loading-indicator' );
+
       // Parse URL configuration
       const urlConfig = parseUrlConfig();
-      
+
       try {
         // Initialize the scene
-        const scene = new ComingSoonScene(container, urlConfig);
+        const scene = new ComingSoonScene( container, urlConfig );
         const success = await scene.init();
 
-        if (success) {
+        if ( success ) {
           // Hide loading indicator
           loadingIndicator.style.display = "none";
-          
+
           // Set up NodeCG integration
-          if (typeof nodecg !== 'undefined') {
+          if ( typeof nodecg !== 'undefined' ) {
             // Listen for configuration changes from dashboard
-            const configReplicant = nodecg.Replicant('sceneConfig');
-            configReplicant.on('change', (newValue) => {
-              if (newValue) {
-                scene.updateConfig(newValue);
+            const configReplicant = nodecg.Replicant( 'sceneConfig' );
+            configReplicant.on( 'change', ( newValue ) => {
+              if ( newValue ) {
+                scene.updateConfig( newValue );
               }
-            });
+            } );
 
             // Listen for explosion triggers
-            const explosionReplicant = nodecg.Replicant('triggerExplosion');
-            explosionReplicant.on('change', (newValue) => {
-              if (newValue && newValue.trigger) {
+            const explosionReplicant = nodecg.Replicant( 'triggerExplosion' );
+            explosionReplicant.on( 'change', ( newValue ) => {
+              if ( newValue && newValue.trigger ) {
                 scene.triggerExplosion();
                 // Reset the trigger
-                setTimeout(() => {
+                setTimeout( () => {
                   explosionReplicant.value = { trigger: false };
-                }, 100);
+                }, 100 );
               }
-            });
+            } );
 
             // Send current config to dashboard
             configReplicant.value = scene.config;
           }
 
-          console.log('3D scene initialized for NodeCG. Remote control enabled.');
+          console.log( '3D scene initialized for NodeCG. Remote control enabled.' );
         } else {
-          throw new Error('Scene initialization failed');
+          throw new Error( 'Scene initialization failed' );
         }
-      } catch (error) {
-        console.error("Error initializing 3D scene:", error);
-        showFallback(urlConfig);
+      } catch ( error ) {
+        console.error( "Error initializing 3D scene:", error );
+        showFallback( urlConfig );
         loadingIndicator.style.display = "none";
       }
-    });
+    } );
   </script>
 </body>
+
 </html>
