@@ -20,11 +20,13 @@ A 3D interactive "Coming Soon" page featuring text that explodes when clicked, t
 The easiest way to get started is to run NodeCG directly from this repository:
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Start NodeCG:**
+
    ```bash
    npm start
    ```
@@ -42,17 +44,20 @@ This automatically sets up a local NodeCG instance with the comingsoon bundle re
 If you have an existing NodeCG installation and want to add this as a bundle:
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 2. **Copy this bundle to your NodeCG bundles directory:**
+
    ```bash
    # Assuming NodeCG is installed and bundles directory exists
    cp -r /path/to/this/bundle /path/to/nodecg/bundles/comingsoon
    ```
 
 3. **Start NodeCG:**
+
    ```bash
    # From your NodeCG installation directory
    npm start
@@ -65,11 +70,13 @@ If you have an existing NodeCG installation and want to add this as a bundle:
 ### For Standalone Use
 
 1. **Start the development server:**
+
    ```bash
    npm run standalone
    ```
 
 2. **Open in browser:**
+
    ```
    http://localhost:8000/examples/
    ```

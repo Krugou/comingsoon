@@ -1,51 +1,65 @@
 #!/bin/bash
+set -euo pipefail
 
-# Simple NodeCG startup script
-echo "Starting NodeCG with comingsoon bundle..."
+echo "[nodecg] Starting NodeCG with live 'comingsoon' bundle (bash script)..."
 
-# Ensure we have the basic directories
-mkdir -p nodecg-simple/bundles/comingsoon
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+ROOT_DIR="$( dirname "$SCRIPT_DIR" )"
+INSTANCE_DIR="$ROOT_DIR/nodecg-instance"
+BUNDLE_NAME="comingsoon"
+BUNDLES_DIR="$INSTANCE_DIR/bundles"
+BUNDLE_LINK="$BUNDLES_DIR/$BUNDLE_NAME"
+PORT="${PORT:-9090}"
 
-# Copy files (excluding dashboard for now due to path resolution issues)
-cp -r extension shared graphics nodecg-simple/bundles/comingsoon/
+mkdir -p "$BUNDLES_DIR"
 
-# Create a simple bundle package.json with graphics only (dashboard panels disabled for now)
-cat > nodecg-simple/bundles/comingsoon/package.json << 'EOF'
-{
-  "name": "comingsoon",
-  "version": "1.0.0",
-  "description": "A 3D interactive Coming Soon page for NodeCG with remote control functionality",
-  "main": "extension/index.js",
-  "nodecg": {
-    "compatibleRange": "^2.0.0",
-    "graphics": [
-      {
-        "file": "index.html",
-        "width": 1920,
-        "height": 1080
-      }
-    ]
-  },
-  "dependencies": {
-    "three": "^0.168.0"
-  }
-}
-EOF
-
-# Create package.json for the NodeCG instance
-cat > nodecg-simple/package.json << 'EOF'
+if [ ! -f "$INSTANCE_DIR/package.json" ]; then
+  echo "[nodecg] Creating NodeCG instance directory..."
+  mkdir -p "$INSTANCE_DIR"
+  cat > "$INSTANCE_DIR/package.json" << 'EOF'
 {
   "name": "nodecg-instance",
   "version": "1.0.0",
+  "private": true,
   "dependencies": {
     "nodecg": "^2.2.1"
   }
 }
 EOF
+fi
 
-# Create symlink to node_modules
-ln -sf ../node_modules nodecg-simple/node_modules
+if [ ! -L "$INSTANCE_DIR/node_modules" ]; then
+  if [ -d "$ROOT_DIR/node_modules" ]; then
+    ln -s "$ROOT_DIR/node_modules" "$INSTANCE_DIR/node_modules"
+  fi
+fi
 
-echo "Starting NodeCG with graphics..."
-echo "Graphics will be available at: http://localhost:9090/bundles/comingsoon/graphics/"
-cd nodecg-simple && ./node_modules/.bin/nodecg start
+if [ ! -d "$ROOT_DIR/node_modules/nodecg" ]; then
+  echo "[nodecg] Installing dependencies in root..."
+  ( cd "$ROOT_DIR" && npm install )
+fi
+
+if [ ! -L "$BUNDLE_LINK" ] && [ ! -d "$BUNDLE_LINK" ]; then
+  echo "[nodecg] Linking bundle -> $BUNDLE_LINK"
+  if ln -s "$ROOT_DIR" "$BUNDLE_LINK" 2>/dev/null; then
+    echo "[nodecg] Symlink created."
+  else
+    echo "[nodecg] Symlink failed, falling back to copy."
+    rsync -a --delete --exclude 'nodecg-instance' --exclude 'node_modules' "$ROOT_DIR/" "$BUNDLE_LINK/"
+  fi
+fi
+
+echo "[nodecg] Launching on port $PORT ..."
+echo "[nodecg] Graphics: http://localhost:$PORT/bundles/$BUNDLE_NAME/graphics/"
+echo "[nodecg] Dashboard: http://localhost:$PORT/#/bundle/$BUNDLE_NAME"
+
+cd "$INSTANCE_DIR"
+exec npx nodecg start --port "$PORT"
+# ...existing code...
+
+echo "[nodecg] Launching on port $PORT ..."
+echo "[nodecg] Graphics: http://localhost:$PORT/bundles/$BUNDLE_NAME/graphics/"
+echo "[nodecg] Dashboard: http://localhost:$PORT/#/bundle/$BUNDLE_NAME"
+
+cd "$INSTANCE_DIR"
+exec npx nodecg start --port "$PORT"
