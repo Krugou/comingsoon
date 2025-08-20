@@ -127,9 +127,9 @@
 
     // Default configuration (mirrors root index.html)
     const defaultConfig = {
-      title: { text: "EXAMPLE SITE", color: 0xfb7aae, size: 1.2, yPos: 3 },
-      subtitle: { text: "COMING SOON 2025", color: 0xf7fafc, size: 0.8, yPos: -2 },
-      attribution: { text: "Example Company & Partner Organization", color: 0x637786, size: 0.4, yPos: -5.5 },
+      title: { text: "EXAMPLE SITE", color: 0xfb7aae, size: 1.2, yPos: 3, enabled: true },
+      subtitle: { text: "COMING SOON 2025", color: 0xf7fafc, size: 0.8, yPos: -2, enabled: true },
+      attribution: { text: "Example Company & Partner Organization", color: 0x637786, size: 0.4, yPos: -5.5, enabled: true },
       background: { color: 0x242D38, particleCount: 1000, particleColor: 0xf7fafc, particleSize: 0.1, particleOpacity: 0.6 },
       animation: { explosionDuration: 6000, explosionStrength: 15, rotationStrength: 3 }
     };
@@ -164,6 +164,7 @@
       cfg.animation.explosionDuration = parseNumber( params.get( 'explosionDuration' ), cfg.animation.explosionDuration );
       cfg.animation.explosionStrength = parseNumber( params.get( 'explosionStrength' ), cfg.animation.explosionStrength );
       cfg.animation.rotationStrength = parseNumber( params.get( 'rotationStrength' ), cfg.animation.rotationStrength );
+      // ensure enabled defaults to true if absent
       return cfg;
     };
 
@@ -285,6 +286,15 @@
       return { group, meshes };
     };
 
+    const setEnabledFallbackVisibility = () => {
+      const tEl = document.getElementById( 'fallback-title' );
+      const sEl = document.getElementById( 'fallback-subtitle' );
+      const aEl = document.getElementById( 'fallback-attribution' );
+      if ( tEl ) tEl.style.display = ( config.title.enabled === false ) ? 'none' : '';
+      if ( sEl ) sEl.style.display = ( config.subtitle.enabled === false ) ? 'none' : '';
+      if ( aEl ) aEl.style.display = ( config.attribution.enabled === false ) ? 'none' : '';
+    };
+
     const createText = async () => {
       // Remove existing
       textGroups.forEach( g => {
@@ -298,7 +308,11 @@
       letterMeshes = [];
 
       const sets = [];
-      for ( const key of [ 'title', 'subtitle', 'attribution' ] ) {
+      const keys = [ 'title', 'subtitle', 'attribution' ];
+      for ( const key of keys ) {
+        const part = config[ key ];
+        if ( part.enabled === false ) continue;          // skip disabled
+        if ( !part.text || part.text.length === 0 ) continue; // allow empty (skip rendering)
         try {
           sets.push( await createTextGeometry(
             scene,
@@ -525,8 +539,12 @@
           configReplicant.on( 'change', newVal => {
             if ( newVal ) {
               config = { ...config, ...newVal }; // shallow merge
-              // update colors / background then rebuild
+              // preserve nested defaults if enabled missing
+              [ 'title', 'subtitle', 'attribution' ].forEach( k => {
+                if ( config[ k ].enabled === undefined ) config[ k ].enabled = true;
+              } );
               document.body.style.backgroundColor = setHex( config.background.color );
+              setEnabledFallbackVisibility();
               createParticles();
               createText();
             }

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,7 +18,7 @@
       border-radius: 8px;
       padding: 16px;
       margin-bottom: 16px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .control-section h3 {
@@ -40,7 +41,8 @@
       font-weight: 500;
     }
 
-    .form-group input, .form-group select {
+    .form-group input,
+    .form-group select {
       padding: 6px 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
@@ -110,6 +112,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="control-section">
     <h3>Quick Actions</h3>
@@ -122,15 +125,16 @@
   <div class="control-section">
     <h3>Text Content</h3>
     <div class="form-group">
-      <label for="title-text">Title</label>
+      <label><input type="checkbox" id="title-enabled" checked style="margin-right:6px;">Title Enabled</label>
       <input type="text" id="title-text" placeholder="EXAMPLE SITE">
     </div>
     <div class="form-group">
-      <label for="subtitle-text">Subtitle</label>
+      <label><input type="checkbox" id="subtitle-enabled" checked style="margin-right:6px;">Subtitle Enabled</label>
       <input type="text" id="subtitle-text" placeholder="COMING SOON 2025">
     </div>
     <div class="form-group">
-      <label for="attribution-text">Attribution</label>
+      <label><input type="checkbox" id="attribution-enabled" checked style="margin-right:6px;">Attribution
+        Enabled</label>
       <input type="text" id="attribution-text" placeholder="Example Company & Partner Organization">
     </div>
   </div>
@@ -205,76 +209,82 @@
 
   <script>
     // Initialize NodeCG replicants
-    const configReplicant = nodecg.Replicant('sceneConfig');
-    const explosionReplicant = nodecg.Replicant('triggerExplosion', { defaultValue: { trigger: false } });
+    const configReplicant = nodecg.Replicant( 'sceneConfig' );
+    const explosionReplicant = nodecg.Replicant( 'triggerExplosion', { defaultValue: { trigger: false } } );
 
     // UI Elements
     const elements = {
-      explodeBtn: document.getElementById('explode-btn'),
-      resetBtn: document.getElementById('reset-btn'),
-      titleText: document.getElementById('title-text'),
-      subtitleText: document.getElementById('subtitle-text'),
-      attributionText: document.getElementById('attribution-text'),
-      titleColor: document.getElementById('title-color'),
-      titleColorText: document.getElementById('title-color-text'),
-      subtitleColor: document.getElementById('subtitle-color'),
-      subtitleColorText: document.getElementById('subtitle-color-text'),
-      attributionColor: document.getElementById('attribution-color'),
-      attributionColorText: document.getElementById('attribution-color-text'),
-      titleSize: document.getElementById('title-size'),
-      titleSizeValue: document.getElementById('title-size-value'),
-      subtitleSize: document.getElementById('subtitle-size'),
-      subtitleSizeValue: document.getElementById('subtitle-size-value'),
-      attributionSize: document.getElementById('attribution-size'),
-      attributionSizeValue: document.getElementById('attribution-size-value'),
-      explosionDuration: document.getElementById('explosion-duration'),
-      explosionDurationValue: document.getElementById('explosion-duration-value'),
-      explosionStrength: document.getElementById('explosion-strength'),
-      explosionStrengthValue: document.getElementById('explosion-strength-value')
+      explodeBtn: document.getElementById( 'explode-btn' ),
+      resetBtn: document.getElementById( 'reset-btn' ),
+      titleText: document.getElementById( 'title-text' ),
+      subtitleText: document.getElementById( 'subtitle-text' ),
+      attributionText: document.getElementById( 'attribution-text' ),
+      titleColor: document.getElementById( 'title-color' ),
+      titleColorText: document.getElementById( 'title-color-text' ),
+      subtitleColor: document.getElementById( 'subtitle-color' ),
+      subtitleColorText: document.getElementById( 'subtitle-color-text' ),
+      attributionColor: document.getElementById( 'attribution-color' ),
+      attributionColorText: document.getElementById( 'attribution-color-text' ),
+      titleSize: document.getElementById( 'title-size' ),
+      titleSizeValue: document.getElementById( 'title-size-value' ),
+      subtitleSize: document.getElementById( 'subtitle-size' ),
+      subtitleSizeValue: document.getElementById( 'subtitle-size-value' ),
+      attributionSize: document.getElementById( 'attribution-size' ),
+      attributionSizeValue: document.getElementById( 'attribution-size-value' ),
+      explosionDuration: document.getElementById( 'explosion-duration' ),
+      explosionDurationValue: document.getElementById( 'explosion-duration-value' ),
+      explosionStrength: document.getElementById( 'explosion-strength' ),
+      explosionStrengthValue: document.getElementById( 'explosion-strength-value' ),
+      titleEnabled: document.getElementById( 'title-enabled' ),
+      subtitleEnabled: document.getElementById( 'subtitle-enabled' ),
+      attributionEnabled: document.getElementById( 'attribution-enabled' )
     };
 
     // Default configuration
     const defaultConfig = {
-      title: { text: "EXAMPLE SITE", color: 0xfb7aae, size: 1.2, yPos: 3 },
-      subtitle: { text: "COMING SOON 2025", color: 0xf7fafc, size: 0.8, yPos: -2 },
-      attribution: { text: "Example Company & Partner Organization", color: 0x637786, size: 0.4, yPos: -5.5 },
+      title: { text: "EXAMPLE SITE", color: 0xfb7aae, size: 1.2, yPos: 3, enabled: true },
+      subtitle: { text: "COMING SOON 2025", color: 0xf7fafc, size: 0.8, yPos: -2, enabled: true },
+      attribution: { text: "Example Company & Partner Organization", color: 0x637786, size: 0.4, yPos: -5.5, enabled: true },
       background: { color: 0x242D38, particleCount: 1000, particleColor: 0xf7fafc, particleSize: 0.1, particleOpacity: 0.6 },
       animation: { explosionDuration: 6000, explosionStrength: 15, rotationStrength: 3 }
     };
 
     // Utility functions
-    function hexToNumber(hex) {
-      return parseInt(hex.replace('#', ''), 16);
+    function hexToNumber ( hex ) {
+      return parseInt( hex.replace( '#', '' ), 16 );
     }
 
-    function numberToHex(num) {
-      return '#' + num.toString(16).padStart(6, '0');
+    function numberToHex ( num ) {
+      return '#' + num.toString( 16 ).padStart( 6, '0' );
     }
 
-    function updateConfig() {
+    function updateConfig () {
       const config = {
         title: {
-          text: elements.titleText.value || defaultConfig.title.text,
-          color: hexToNumber(elements.titleColor.value),
-          size: parseFloat(elements.titleSize.value),
-          yPos: defaultConfig.title.yPos
+          text: elements.titleText.value,              // keep empty string if user cleared
+          color: hexToNumber( elements.titleColor.value ),
+          size: parseFloat( elements.titleSize.value ),
+          yPos: defaultConfig.title.yPos,
+          enabled: elements.titleEnabled.checked
         },
         subtitle: {
-          text: elements.subtitleText.value || defaultConfig.subtitle.text,
-          color: hexToNumber(elements.subtitleColor.value),
-          size: parseFloat(elements.subtitleSize.value),
-          yPos: defaultConfig.subtitle.yPos
+          text: elements.subtitleText.value,
+          color: hexToNumber( elements.subtitleColor.value ),
+          size: parseFloat( elements.subtitleSize.value ),
+          yPos: defaultConfig.subtitle.yPos,
+          enabled: elements.subtitleEnabled.checked
         },
         attribution: {
-          text: elements.attributionText.value || defaultConfig.attribution.text,
-          color: hexToNumber(elements.attributionColor.value),
-          size: parseFloat(elements.attributionSize.value),
-          yPos: defaultConfig.attribution.yPos
+          text: elements.attributionText.value,
+          color: hexToNumber( elements.attributionColor.value ),
+          size: parseFloat( elements.attributionSize.value ),
+          yPos: defaultConfig.attribution.yPos,
+          enabled: elements.attributionEnabled.checked
         },
         background: defaultConfig.background,
         animation: {
-          explosionDuration: parseInt(elements.explosionDuration.value),
-          explosionStrength: parseInt(elements.explosionStrength.value),
+          explosionDuration: parseInt( elements.explosionDuration.value ),
+          explosionStrength: parseInt( elements.explosionStrength.value ),
           rotationStrength: defaultConfig.animation.rotationStrength
         }
       };
@@ -282,139 +292,159 @@
       configReplicant.value = config;
     }
 
-    function loadConfigToUI(config) {
-      if (!config) return;
+    function loadConfigToUI ( config ) {
+      if ( !config ) return;
 
-      elements.titleText.value = config.title?.text || '';
-      elements.subtitleText.value = config.subtitle?.text || '';
-      elements.attributionText.value = config.attribution?.text || '';
+      // text values (allow empty)
+      elements.titleText.value = config.title?.text ?? '';
+      elements.subtitleText.value = config.subtitle?.text ?? '';
+      elements.attributionText.value = config.attribution?.text ?? '';
 
-      if (config.title?.color !== undefined) {
-        const hex = numberToHex(config.title.color);
+      // enabled
+      elements.titleEnabled.checked = config.title?.enabled !== false;
+      elements.subtitleEnabled.checked = config.subtitle?.enabled !== false;
+      elements.attributionEnabled.checked = config.attribution?.enabled !== false;
+
+      // disable inputs when not enabled
+      const toggleDisabled = () => {
+        elements.titleText.disabled = !elements.titleEnabled.checked;
+        elements.subtitleText.disabled = !elements.subtitleEnabled.checked;
+        elements.attributionText.disabled = !elements.attributionEnabled.checked;
+      };
+      toggleDisabled();
+
+      if ( config.title?.color !== undefined ) {
+        const hex = numberToHex( config.title.color );
         elements.titleColor.value = hex;
-        elements.titleColorText.value = hex.substring(1);
+        elements.titleColorText.value = hex.substring( 1 );
       }
 
-      if (config.subtitle?.color !== undefined) {
-        const hex = numberToHex(config.subtitle.color);
+      if ( config.subtitle?.color !== undefined ) {
+        const hex = numberToHex( config.subtitle.color );
         elements.subtitleColor.value = hex;
-        elements.subtitleColorText.value = hex.substring(1);
+        elements.subtitleColorText.value = hex.substring( 1 );
       }
 
-      if (config.attribution?.color !== undefined) {
-        const hex = numberToHex(config.attribution.color);
+      if ( config.attribution?.color !== undefined ) {
+        const hex = numberToHex( config.attribution.color );
         elements.attributionColor.value = hex;
-        elements.attributionColorText.value = hex.substring(1);
+        elements.attributionColorText.value = hex.substring( 1 );
       }
 
-      if (config.title?.size !== undefined) {
+      if ( config.title?.size !== undefined ) {
         elements.titleSize.value = config.title.size;
         elements.titleSizeValue.textContent = config.title.size;
       }
 
-      if (config.subtitle?.size !== undefined) {
+      if ( config.subtitle?.size !== undefined ) {
         elements.subtitleSize.value = config.subtitle.size;
         elements.subtitleSizeValue.textContent = config.subtitle.size;
       }
 
-      if (config.attribution?.size !== undefined) {
+      if ( config.attribution?.size !== undefined ) {
         elements.attributionSize.value = config.attribution.size;
         elements.attributionSizeValue.textContent = config.attribution.size;
       }
 
-      if (config.animation?.explosionDuration !== undefined) {
+      if ( config.animation?.explosionDuration !== undefined ) {
         elements.explosionDuration.value = config.animation.explosionDuration;
         elements.explosionDurationValue.textContent = config.animation.explosionDuration;
       }
 
-      if (config.animation?.explosionStrength !== undefined) {
+      if ( config.animation?.explosionStrength !== undefined ) {
         elements.explosionStrength.value = config.animation.explosionStrength;
         elements.explosionStrengthValue.textContent = config.animation.explosionStrength;
       }
     }
 
     // Event listeners
-    elements.explodeBtn.addEventListener('click', () => {
+    elements.explodeBtn.addEventListener( 'click', () => {
       explosionReplicant.value = { trigger: true };
-    });
+    } );
 
-    elements.resetBtn.addEventListener('click', () => {
-      loadConfigToUI(defaultConfig);
+    elements.resetBtn.addEventListener( 'click', () => {
+      loadConfigToUI( defaultConfig );
       updateConfig();
-    });
+    } );
 
     // Text inputs
-    elements.titleText.addEventListener('input', updateConfig);
-    elements.subtitleText.addEventListener('input', updateConfig);
-    elements.attributionText.addEventListener('input', updateConfig);
+    elements.titleText.addEventListener( 'input', updateConfig );
+    elements.subtitleText.addEventListener( 'input', updateConfig );
+    elements.attributionText.addEventListener( 'input', updateConfig );
 
     // Color inputs
-    elements.titleColor.addEventListener('change', (e) => {
-      elements.titleColorText.value = e.target.value.substring(1);
+    elements.titleColor.addEventListener( 'change', ( e ) => {
+      elements.titleColorText.value = e.target.value.substring( 1 );
       updateConfig();
-    });
-    elements.titleColorText.addEventListener('input', (e) => {
+    } );
+    elements.titleColorText.addEventListener( 'input', ( e ) => {
       elements.titleColor.value = '#' + e.target.value;
       updateConfig();
-    });
+    } );
 
-    elements.subtitleColor.addEventListener('change', (e) => {
-      elements.subtitleColorText.value = e.target.value.substring(1);
+    elements.subtitleColor.addEventListener( 'change', ( e ) => {
+      elements.subtitleColorText.value = e.target.value.substring( 1 );
       updateConfig();
-    });
-    elements.subtitleColorText.addEventListener('input', (e) => {
+    } );
+    elements.subtitleColorText.addEventListener( 'input', ( e ) => {
       elements.subtitleColor.value = '#' + e.target.value;
       updateConfig();
-    });
+    } );
 
-    elements.attributionColor.addEventListener('change', (e) => {
-      elements.attributionColorText.value = e.target.value.substring(1);
+    elements.attributionColor.addEventListener( 'change', ( e ) => {
+      elements.attributionColorText.value = e.target.value.substring( 1 );
       updateConfig();
-    });
-    elements.attributionColorText.addEventListener('input', (e) => {
+    } );
+    elements.attributionColorText.addEventListener( 'input', ( e ) => {
       elements.attributionColor.value = '#' + e.target.value;
       updateConfig();
-    });
+    } );
 
     // Range inputs
-    elements.titleSize.addEventListener('input', (e) => {
+    elements.titleSize.addEventListener( 'input', ( e ) => {
       elements.titleSizeValue.textContent = e.target.value;
       updateConfig();
-    });
+    } );
 
-    elements.subtitleSize.addEventListener('input', (e) => {
+    elements.subtitleSize.addEventListener( 'input', ( e ) => {
       elements.subtitleSizeValue.textContent = e.target.value;
       updateConfig();
-    });
+    } );
 
-    elements.attributionSize.addEventListener('input', (e) => {
+    elements.attributionSize.addEventListener( 'input', ( e ) => {
       elements.attributionSizeValue.textContent = e.target.value;
       updateConfig();
-    });
+    } );
 
-    elements.explosionDuration.addEventListener('input', (e) => {
+    elements.explosionDuration.addEventListener( 'input', ( e ) => {
       elements.explosionDurationValue.textContent = e.target.value;
       updateConfig();
-    });
+    } );
 
-    elements.explosionStrength.addEventListener('input', (e) => {
+    elements.explosionStrength.addEventListener( 'input', ( e ) => {
       elements.explosionStrengthValue.textContent = e.target.value;
       updateConfig();
-    });
+    } );
 
     // Initialize from replicant
-    configReplicant.on('change', (newValue) => {
-      if (newValue) {
-        loadConfigToUI(newValue);
+    configReplicant.on( 'change', ( newValue ) => {
+      if ( newValue ) {
+        loadConfigToUI( newValue );
       }
-    });
+    } );
 
     // Load default configuration on startup
-    setTimeout(() => {
-      if (!configReplicant.value) {
+    setTimeout( () => {
+      if ( !configReplicant.value ) {
         configReplicant.value = defaultConfig;
       }
-    }, 100);
+    }, 100 );
+
+    // Add listeners for enable checkboxes
+    elements.titleEnabled.addEventListener( 'change', () => { elements.titleText.disabled = !elements.titleEnabled.checked; updateConfig(); } );
+    elements.subtitleEnabled.addEventListener( 'change', () => { elements.subtitleText.disabled = !elements.subtitleEnabled.checked; updateConfig(); } );
+    elements.attributionEnabled.addEventListener( 'change', () => { elements.attributionText.disabled = !elements.attributionEnabled.checked; updateConfig(); } );
   </script>
 </body>
+
 </html>

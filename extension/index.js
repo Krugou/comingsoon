@@ -4,9 +4,9 @@ module.exports = function (nodecg) {
   const sceneConfig = nodecg.Replicant('sceneConfig', {
     persistent: true,
     default: {
-      title: { text: 'EXAMPLE SITE', color: 0xfb7aae, size: 1.2, yPos: 3 },
-      subtitle: { text: 'COMING SOON 2025', color: 0xf7fafc, size: 0.8, yPos: -2 },
-      attribution: { text: 'Example Company & Partner Organization', color: 0x637786, size: 0.4, yPos: -5.5 },
+      title: { text: 'EXAMPLE SITE', color: 0xfb7aae, size: 1.2, yPos: 3, enabled: true },
+      subtitle: { text: 'COMING SOON 2025', color: 0xf7fafc, size: 0.8, yPos: -2, enabled: true },
+      attribution: { text: 'Example Company & Partner Organization', color: 0x637786, size: 0.4, yPos: -5.5, enabled: true },
       background: {
         color: 0x242D38,
         particleCount: 1000,
