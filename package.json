@@ -29,13 +29,13 @@
         "name": "controls",
         "title": "Coming Soon Controls",
         "width": 3,
-        "file": "dashboard/controls.html",
+        "file": "controls.html",
         "headerColor": "#fb7aae"
       }
     ],
     "graphics": [
       {
-        "file": "graphics/index.html",
+        "file": "index.html",
         "width": 1920,
         "height": 1080
       }
