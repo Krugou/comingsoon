@@ -7,7 +7,9 @@ export default defineConfig({
     rollupOptions: {
       input: {
         graphics: 'graphics/index.html',
+        'name-tag-chyron': 'graphics/name-tag-chyron.html',
         dashboard: 'dashboard/controls.html',
+        'name-tag-dashboard': 'dashboard/name-tag-chyron.html',
         standalone: 'examples/index.html'
       }
     }

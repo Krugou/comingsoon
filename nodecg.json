@@ -11,11 +11,23 @@
         "width": 3,
         "file": "controls.html",
         "headerColor": "#fb7aae"
+      },
+      {
+        "name": "name-tag-chyron",
+        "title": "Name Tag Chyron",
+        "width": 3,
+        "file": "name-tag-chyron.html",
+        "headerColor": "#0F79C6"
       }
     ],
     "graphics": [
       {
         "file": "index.html",
+        "width": 1920,
+        "height": 1080
+      },
+      {
+        "file": "name-tag-chyron.html",
         "width": 1920,
         "height": 1080
       }
