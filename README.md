@@ -1,27 +1,95 @@
-# Example Site - Coming Soon
+# Coming Soon - NodeCG Bundle
 
-A 3D interactive "Coming Soon" page featuring text that explodes when clicked, tapped, or when a key is pressed.
+A 3D interactive "Coming Soon" page featuring text that explodes when clicked, tapped, or when a key is pressed. Now available as both a NodeCG bundle with remote control capabilities and a standalone HTML page.
 
 ## Features
 
-- 3D rendered text with TextGeometry
+- 3D rendered text with Three.js
 - Exploding text animation on interaction
-- Particle background
+- Particle background effects
 - Mobile-friendly design
 - Customizable text, colors, and animation settings
 - Fallback display for browsers without WebGL support
+- **NodeCG Integration** with remote control dashboard
+- **Standalone HTML** for quick preview and testing
 
-## Customization via URL Parameters
+## Installation & Setup
 
-You can customize almost every aspect of the page by adding parameters to the URL. The following parameters are supported:
+### For NodeCG Bundle
 
-### Text Content
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Copy this bundle to your NodeCG bundles directory:**
+   ```bash
+   # Assuming NodeCG is installed and bundles directory exists
+   cp -r /path/to/this/bundle /path/to/nodecg/bundles/comingsoon
+   ```
+
+3. **Start NodeCG:**
+   ```bash
+   # From your NodeCG installation directory
+   npm start
+   ```
+
+4. **Access the graphics and dashboard:**
+   - Graphics: `http://localhost:9090/bundles/comingsoon/graphics/`
+   - Dashboard: `http://localhost:9090/dashboard/`
+
+### For Standalone Use
+
+1. **Start the development server:**
+   ```bash
+   npm run standalone
+   ```
+
+2. **Open in browser:**
+   ```
+   http://localhost:8000/examples/
+   ```
+
+## NodeCG Features
+
+### Dashboard Controls
+
+The NodeCG dashboard provides real-time control over:
+
+- **Quick Actions:** Trigger text explosion remotely
+- **Text Content:** Change title, subtitle, and attribution text
+- **Colors:** Adjust text colors with color pickers
+- **Sizes:** Control text sizes with sliders
+- **Animation:** Modify explosion duration and strength
+
+### Remote Control API
+
+The bundle exposes REST API endpoints for external control:
+
+- `GET /api/coming-soon/config` - Get current configuration
+- `POST /api/coming-soon/config` - Update configuration
+- `POST /api/coming-soon/explode` - Trigger explosion
+
+### Replicants
+
+The bundle uses two NodeCG replicants:
+
+- `sceneConfig` - Stores current scene configuration
+- `triggerExplosion` - Triggers explosion animations
+
+## Standalone Customization
+
+### URL Parameters
+
+You can customize the standalone version using URL parameters:
+
+#### Text Content
 
 - `title` - Main title text (default: "EXAMPLE SITE")
 - `subtitle` - Subtitle text (default: "COMING SOON 2025")
 - `attribution` - Attribution text (default: "Example Company & Partner Organization")
 
-### Text Appearance
+#### Text Appearance
 
 - `titleColor` - Hex color for the title (default: "fb7aae")
 - `subtitleColor` - Hex color for the subtitle (default: "f7fafc")
@@ -33,7 +101,7 @@ You can customize almost every aspect of the page by adding parameters to the UR
 - `subtitleY` - Vertical position of the subtitle (default: -2)
 - `attributionY` - Vertical position of the attribution (default: -5.5)
 
-### Background and Particles
+#### Background and Particles
 
 - `bgColor` - Hex color for the background (default: "242D38")
 - `particleCount` - Number of particles (default: 1000)
@@ -41,53 +109,80 @@ You can customize almost every aspect of the page by adding parameters to the UR
 - `particleSize` - Size of particles (default: 0.1)
 - `particleOpacity` - Opacity of particles (default: 0.6)
 
-### Animation Settings
+#### Animation Settings
 
 - `explosionDuration` - Duration of explosion in milliseconds (default: 6000)
 - `explosionStrength` - Strength of explosion effect (default: 15)
 - `rotationStrength` - Strength of rotation during explosion (default: 3)
 
-## Examples
+### Examples
 
-### Basic Text Changes
-
-```
-index.html?title=WELCOME&subtitle=OPENING SOON
-```
-
-### Custom Colors
+#### Basic Text Changes
 
 ```
-index.html?titleColor=ff0000&subtitleColor=00ff00&bgColor=000000
+examples/index.html?title=WELCOME&subtitle=OPENING SOON
 ```
 
-### Adjust Sizes and Positions
+#### Custom Colors
 
 ```
-index.html?titleSize=2&titleY=5&subtitleY=-3
+examples/index.html?titleColor=ff0000&subtitleColor=00ff00&bgColor=000000
 ```
 
-### Explosion Parameters
+#### Complete Customization
 
 ```
-index.html?explosionStrength=25&explosionDuration=8000
+examples/index.html?title=CUSTOM TITLE&subtitle=LAUNCHING FALL 2025&attribution=A project by Example Team&titleColor=00ff00&subtitleColor=0000ff&attributionColor=ff00ff&bgColor=111111&titleSize=1.5&subtitleSize=0.9&attributionSize=0.5&titleY=4&subtitleY=-1&attributionY=-6&particleCount=2000&particleColor=00ffff&particleSize=0.15&explosionStrength=20&explosionDuration=5000&rotationStrength=4
 ```
 
-### Complete Customization Example
+## Development
+
+### Building
+
+```bash
+npm run build
+```
+
+This creates production-ready files in the `dist/` directory.
+
+### File Structure
 
 ```
-index.html?title=CUSTOM TITLE&subtitle=LAUNCHING FALL 2025&attribution=A project by Example Team&titleColor=00ff00&subtitleColor=0000ff&attributionColor=ff00ff&bgColor=111111&titleSize=1.5&subtitleSize=0.9&attributionSize=0.5&titleY=4&subtitleY=-1&attributionY=-6&particleCount=2000&particleColor=00ffff&particleSize=0.15&explosionStrength=20&explosionDuration=5000&rotationStrength=4
+├── package.json           # Dependencies and scripts
+├── nodecg.json           # NodeCG bundle configuration
+├── vite.config.js        # Build configuration
+├── tailwind.config.js    # Tailwind CSS configuration
+├── extension/            # NodeCG server-side code
+│   └── index.js
+├── graphics/             # NodeCG graphics (browser source)
+│   └── index.html
+├── dashboard/            # NodeCG dashboard panels
+│   └── controls.html
+├── shared/               # Shared code modules
+│   ├── scene.js         # Three.js scene class
+│   └── utils.js         # Utility functions
+├── examples/             # Standalone HTML version
+│   └── index.html       # Original standalone page
+└── dist/                 # Built files (generated)
 ```
+
+### Technology Stack
+
+- **Three.js** for 3D rendering
+- **NodeCG** for broadcast graphics integration
+- **Vite** for building and development
+- **Tailwind CSS** for styling
+- **ES6 Modules** for code organization
 
 ## Browser Compatibility
 
 The page requires WebGL support. For browsers without WebGL capabilities, a fallback static version is displayed automatically.
 
-## Development
+## Contributing
 
-This project uses:
+This bundle is designed to be easily extensible. The modular structure allows for:
 
-- Three.js for 3D rendering
-- TextGeometry for 3D text
-- Tailwind CSS for styling
-- Vanilla JavaScript for interaction
+- Adding new animation types
+- Extending the dashboard controls
+- Creating additional graphics layouts
+- Integrating with external APIs
