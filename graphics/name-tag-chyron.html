@@ -43,133 +43,7 @@
       transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    /* Breaking News Chyron Styles */
-    .breaking-news-container {
-      position: fixed;
-      top: 40px;
-      left: 0;
-      right: 0;
-      z-index: 2000;
-      height: 60px;
-    }
 
-    .breaking-news-hidden {
-      transform: translateY(-100%);
-      opacity: 0;
-    }
-
-    .breaking-news-visible {
-      transform: translateY(0);
-      opacity: 1;
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .breaking-news-banner {
-      display: flex;
-      height: 100%;
-      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
-      box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
-      border-bottom: 3px solid #fbbf24;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .breaking-news-banner::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      animation: breakingNewsShine 3s ease-in-out infinite;
-    }
-
-    .breaking-news-label {
-      display: flex;
-      align-items: center;
-      background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
-      padding: 0 24px;
-      min-width: 200px;
-      border-right: 3px solid #fbbf24;
-      position: relative;
-      z-index: 1;
-    }
-
-    .breaking-news-flash {
-      width: 8px;
-      height: 8px;
-      background: #fbbf24;
-      border-radius: 50%;
-      margin: 0 8px;
-      animation: breakingNewsFlash 1s ease-in-out infinite;
-      box-shadow: 0 0 10px #fbbf24;
-    }
-
-    .breaking-news-flash-delay {
-      animation-delay: 0.5s;
-    }
-
-    .breaking-news-text {
-      font-family: 'Lexend Mega', sans-serif;
-      font-weight: 900;
-      font-size: 16px;
-      color: #ffffff;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-      letter-spacing: 1px;
-    }
-
-    .breaking-news-content {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      position: relative;
-      background: linear-gradient(90deg, rgba(0, 0, 0, 0.1) 0%, transparent 10%, transparent 90%, rgba(0, 0, 0, 0.1) 100%);
-    }
-
-    .breaking-news-marquee {
-      font-family: 'Lexend Mega', sans-serif;
-      font-weight: 600;
-      font-size: 18px;
-      color: #ffffff;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-      white-space: nowrap;
-      animation: breakingNewsScroll 30s linear infinite;
-      padding-left: 100%;
-    }
-
-    @keyframes breakingNewsScroll {
-      0% {
-        transform: translateX(0);
-      }
-      100% {
-        transform: translateX(-100%);
-      }
-    }
-
-    @keyframes breakingNewsFlash {
-      0%, 100% {
-        opacity: 1;
-        transform: scale(1);
-      }
-      50% {
-        opacity: 0.3;
-        transform: scale(1.2);
-      }
-    }
-
-    @keyframes breakingNewsShine {
-      0% {
-        left: -100%;
-      }
-      50% {
-        left: 100%;
-      }
-      100% {
-        left: 100%;
-      }
-    }
 
     /* Custom animations since we can't rely on TailwindCSS CDN */
     @keyframes slideInLeft {
@@ -783,25 +657,6 @@
     </div>
   </div>
 
-  <!-- Breaking News Chyron -->
-  <div id="breaking-news-chyron" class="breaking-news-container breaking-news-hidden">
-    <!-- Breaking News Banner -->
-    <div class="breaking-news-banner">
-      <!-- Flashing "BREAKING NEWS" indicator -->
-      <div class="breaking-news-label">
-        <div class="breaking-news-flash">●</div>
-        <span class="breaking-news-text">BREAKING NEWS</span>
-        <div class="breaking-news-flash breaking-news-flash-delay">●</div>
-      </div>
-      
-      <!-- Scrolling news content -->
-      <div class="breaking-news-content">
-        <div class="breaking-news-marquee" id="breaking-news-text">
-          This is a breaking news update that will scroll across the screen with professional marquee effect
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- NodeCG integration script -->
   <script>
@@ -822,13 +677,6 @@
         showCompany: true,
         animation: 'enhanced-pro',
         duration: 600
-      };
-
-      // Breaking News configuration
-      let breakingNewsConfig = {
-        visible: false,
-        text: 'This is a breaking news update that will scroll across the screen with professional marquee effect',
-        speed: 30 // seconds for full scroll
       };
 
       const animationClassSets = {
@@ -929,35 +777,13 @@
         applyElementVisibility();
       };
 
-      // Breaking News Functions
-      const breakingNewsElement = document.getElementById( 'breaking-news-chyron' );
-      const breakingNewsTextElement = document.getElementById( 'breaking-news-text' );
 
-      const showBreakingNews = () => {
-        breakingNewsElement.classList.remove( 'breaking-news-hidden' );
-        breakingNewsElement.classList.add( 'breaking-news-visible' );
-      };
-
-      const hideBreakingNews = () => {
-        breakingNewsElement.classList.remove( 'breaking-news-visible' );
-        breakingNewsElement.classList.add( 'breaking-news-hidden' );
-      };
-
-      const updateBreakingNews = ( config ) => {
-        if ( config.text !== undefined ) {
-          breakingNewsTextElement.textContent = config.text;
-        }
-        if ( config.speed !== undefined ) {
-          breakingNewsTextElement.style.animationDuration = config.speed + 's';
-        }
-      };
 
       // NodeCG integration
       if ( typeof nodecg !== 'undefined' ) {
         console.log( 'NodeCG detected, setting up replicants' );
 
         const chyronReplicant = nodecg.Replicant( 'nameTagChyron' );
-        const breakingNewsReplicant = nodecg.Replicant( 'breakingNews' );
 
         chyronReplicant.on( 'change', ( newVal ) => {
           if ( newVal ) {
@@ -974,28 +800,10 @@
           }
         } );
 
-        breakingNewsReplicant.on( 'change', ( newVal ) => {
-          if ( newVal ) {
-            console.log( 'Breaking News config changed:', newVal );
-            breakingNewsConfig = { ...breakingNewsConfig, ...newVal };
-
-            updateBreakingNews( breakingNewsConfig );
-
-            if ( breakingNewsConfig.visible ) {
-              showBreakingNews();
-            } else {
-              hideBreakingNews();
-            }
-          }
-        } );
-
         // Initialize with default values if no replicant exists
         setTimeout( () => {
           if ( !chyronReplicant.value ) {
             chyronReplicant.value = chyronConfig;
-          }
-          if ( !breakingNewsReplicant.value ) {
-            breakingNewsReplicant.value = breakingNewsConfig;
           }
         }, 100 );
       } else {
@@ -1005,11 +813,6 @@
         setTimeout( () => {
           showChyron();
         }, 1000 );
-
-        // Show breaking news after 2 seconds
-        setTimeout( () => {
-          showBreakingNews();
-        }, 2000 );
 
         // Hide chyron after 5 seconds in demo mode
         setTimeout( () => {
@@ -1025,13 +828,6 @@
           } );
           showChyron();
         }, 8000 );
-
-        // Demo breaking news updates
-        setTimeout( () => {
-          updateBreakingNews( {
-            text: 'MAJOR TECH BREAKTHROUGH: New revolutionary development announced by leading technology company, changing the industry landscape forever'
-          } );
-        }, 10000 );
       }
 
       // Keyboard shortcuts for testing
@@ -1042,14 +838,6 @@
             showChyron();
           } else {
             hideChyron();
-          }
-        }
-        if ( event.key === 'b' ) {
-          breakingNewsConfig.visible = !breakingNewsConfig.visible;
-          if ( breakingNewsConfig.visible ) {
-            showBreakingNews();
-          } else {
-            hideBreakingNews();
           }
         }
       } );

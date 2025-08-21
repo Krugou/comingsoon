@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Breaking News Controls</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      margin: 0;
+      padding: 16px;
+      background: #f5f5f5;
+    }
+
+    .control-section {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .control-section h3 {
+      margin: 0 0 12px 0;
+      color: #333;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 12px;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      padding: 6px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #dc2626;
+      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.2);
+    }
+
+    .button-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #b91c1c;
+    }
+
+    .btn-secondary {
+      background: #6b7280;
+      color: white;
+    }
+
+    .btn-secondary:hover {
+      background: #4b5563;
+    }
+
+    .btn-danger {
+      background: #e53e3e;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c53030;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+    }
+
+    .status-visible {
+      background-color: #dc2626;
+      box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+    }
+
+    .status-hidden {
+      background-color: #cbd5e0;
+    }
+
+    .preview-section {
+      background: #111827;
+      border-radius: 8px;
+      padding: 16px;
+      color: white;
+      position: relative;
+      min-height: 80px;
+      overflow: hidden;
+      border: 2px solid #374151;
+    }
+
+    .preview-breaking-news {
+      position: absolute;
+      top: 8px;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+      border-bottom: 2px solid #fbbf24;
+      transform: translateY(-100%);
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      display: flex;
+      align-items: center;
+      font-size: 10px;
+    }
+
+    .preview-breaking-news.visible {
+      transform: translateY(0);
+    }
+
+    .preview-label {
+      background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+      padding: 0 12px;
+      min-width: 100px;
+      border-right: 2px solid #fbbf24;
+      font-weight: 900;
+      color: white;
+      font-size: 8px;
+    }
+
+    .preview-content {
+      flex: 1;
+      padding: 0 12px;
+      overflow: hidden;
+    }
+
+    .preview-marquee {
+      white-space: nowrap;
+      animation: scroll 20s linear infinite;
+      font-weight: 600;
+      color: white;
+      font-size: 10px;
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .stats-item {
+      background: #f9fafb;
+      padding: 8px;
+      border-radius: 4px;
+      border-left: 3px solid #dc2626;
+    }
+
+    .stats-label {
+      font-size: 10px;
+      color: #6b7280;
+      font-weight: 500;
+    }
+
+    .stats-value {
+      font-size: 12px;
+      color: #111827;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="control-section">
+    <h3>Breaking News Status</h3>
+    <div class="form-group">
+      <label>Current Status</label>
+      <div>
+        <span id="breaking-news-status-indicator" class="status-indicator status-hidden"></span>
+        <span id="breaking-news-status-text">Hidden</span>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button id="breaking-news-show-btn" class="btn btn-primary">Show Breaking News</button>
+      <button id="breaking-news-hide-btn" class="btn btn-secondary">Hide Breaking News</button>
+      <button id="breaking-news-toggle-btn" class="btn btn-danger">Toggle</button>
+    </div>
+  </div>
+
+  <div class="control-section">
+    <h3>Content Settings</h3>
+
+    <div class="form-group">
+      <label for="breaking-news-text-input">Breaking News Text</label>
+      <textarea id="breaking-news-text-input" rows="4" placeholder="Enter breaking news text..." style="width: 100%; resize: vertical;">This is a breaking news update that will scroll across the screen with professional marquee effect</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="breaking-news-speed-input">Scroll Speed (seconds)</label>
+      <input type="number" id="breaking-news-speed-input" min="10" max="60" step="5" value="30">
+      <small style="color: #6b7280; font-size: 10px; margin-top: 4px;">Lower values = faster scrolling</small>
+    </div>
+  </div>
+
+  <div class="control-section">
+    <h3>Preview</h3>
+    <div class="preview-section">
+      <div id="preview-breaking-news" class="preview-breaking-news">
+        <div class="preview-label">BREAKING NEWS</div>
+        <div class="preview-content">
+          <div id="preview-marquee" class="preview-marquee">
+            This is a breaking news update that will scroll across the screen with professional marquee effect
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button id="preview-show-btn" class="btn btn-secondary">Preview Show</button>
+      <button id="preview-hide-btn" class="btn btn-secondary">Preview Hide</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stats-item">
+        <div class="stats-label">Text Length</div>
+        <div id="text-length" class="stats-value">0 chars</div>
+      </div>
+      <div class="stats-item">
+        <div class="stats-label">Est. Duration</div>
+        <div id="scroll-duration" class="stats-value">30s</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener( 'DOMContentLoaded', () => {
+      // Check if NodeCG is available
+      if ( typeof nodecg === 'undefined' ) {
+        console.warn( 'NodeCG not available. Running in standalone mode.' );
+        return;
+      }
+
+      // NodeCG elements
+      const breakingNewsReplicant = nodecg.Replicant( 'breakingNews' );
+
+      // UI elements
+      const breakingNewsStatusIndicator = document.getElementById( 'breaking-news-status-indicator' );
+      const breakingNewsStatusText = document.getElementById( 'breaking-news-status-text' );
+      const breakingNewsShowBtn = document.getElementById( 'breaking-news-show-btn' );
+      const breakingNewsHideBtn = document.getElementById( 'breaking-news-hide-btn' );
+      const breakingNewsToggleBtn = document.getElementById( 'breaking-news-toggle-btn' );
+      const breakingNewsTextInput = document.getElementById( 'breaking-news-text-input' );
+      const breakingNewsSpeedInput = document.getElementById( 'breaking-news-speed-input' );
+
+      // Preview elements
+      const previewBreakingNews = document.getElementById( 'preview-breaking-news' );
+      const previewMarquee = document.getElementById( 'preview-marquee' );
+      const previewShowBtn = document.getElementById( 'preview-show-btn' );
+      const previewHideBtn = document.getElementById( 'preview-hide-btn' );
+      const textLength = document.getElementById( 'text-length' );
+      const scrollDuration = document.getElementById( 'scroll-duration' );
+
+      // Default breaking news configuration
+      const defaultBreakingNewsConfig = {
+        visible: false,
+        text: 'This is a breaking news update that will scroll across the screen with professional marquee effect',
+        speed: 30
+      };
+
+      // Update Breaking News UI from config
+      const updateBreakingNewsUI = ( config ) => {
+        breakingNewsTextInput.value = config.text || '';
+        breakingNewsSpeedInput.value = config.speed || 30;
+
+        // Update status
+        if ( config.visible ) {
+          breakingNewsStatusIndicator.classList.remove( 'status-hidden' );
+          breakingNewsStatusIndicator.classList.add( 'status-visible' );
+          breakingNewsStatusText.textContent = 'Visible';
+        } else {
+          breakingNewsStatusIndicator.classList.remove( 'status-visible' );
+          breakingNewsStatusIndicator.classList.add( 'status-hidden' );
+          breakingNewsStatusText.textContent = 'Hidden';
+        }
+
+        updatePreview( config );
+        updateStats( config );
+      };
+
+      // Update preview
+      const updatePreview = ( config ) => {
+        previewMarquee.textContent = config.text || '';
+        previewMarquee.style.animationDuration = ( config.speed || 30 ) + 's';
+      };
+
+      // Update stats
+      const updateStats = ( config ) => {
+        const text = config.text || '';
+        textLength.textContent = text.length + ' chars';
+        scrollDuration.textContent = ( config.speed || 30 ) + 's';
+      };
+
+      // Update breaking news replicant
+      const updateBreakingNewsReplicant = () => {
+        const currentVisible = breakingNewsReplicant.value ? breakingNewsReplicant.value.visible : false;
+        const newConfig = {
+          text: breakingNewsTextInput.value,
+          speed: parseInt( breakingNewsSpeedInput.value ),
+          visible: currentVisible
+        };
+        breakingNewsReplicant.value = newConfig;
+        updateStats( newConfig );
+      };
+
+      // Breaking News Event listeners for buttons
+      breakingNewsShowBtn.addEventListener( 'click', () => {
+        const currentConfig = breakingNewsReplicant.value || defaultBreakingNewsConfig;
+        breakingNewsReplicant.value = { ...currentConfig, visible: true };
+      } );
+
+      breakingNewsHideBtn.addEventListener( 'click', () => {
+        const currentConfig = breakingNewsReplicant.value || defaultBreakingNewsConfig;
+        breakingNewsReplicant.value = { ...currentConfig, visible: false };
+      } );
+
+      breakingNewsToggleBtn.addEventListener( 'click', () => {
+        const currentConfig = breakingNewsReplicant.value || defaultBreakingNewsConfig;
+        breakingNewsReplicant.value = { ...currentConfig, visible: !currentConfig.visible };
+      } );
+
+      // Breaking News Event listeners for inputs
+      breakingNewsTextInput.addEventListener( 'input', () => {
+        updateBreakingNewsReplicant();
+        updatePreview( {
+          text: breakingNewsTextInput.value,
+          speed: parseInt( breakingNewsSpeedInput.value )
+        } );
+      } );
+
+      breakingNewsSpeedInput.addEventListener( 'input', () => {
+        updateBreakingNewsReplicant();
+        updatePreview( {
+          text: breakingNewsTextInput.value,
+          speed: parseInt( breakingNewsSpeedInput.value )
+        } );
+      } );
+
+      // Preview controls
+      previewShowBtn.addEventListener( 'click', () => {
+        previewBreakingNews.classList.add( 'visible' );
+      } );
+
+      previewHideBtn.addEventListener( 'click', () => {
+        previewBreakingNews.classList.remove( 'visible' );
+      } );
+
+      // Listen for replicant changes
+      breakingNewsReplicant.on( 'change', ( newVal ) => {
+        if ( newVal ) {
+          updateBreakingNewsUI( newVal );
+        }
+      } );
+
+      // Initialize with default values if no replicant exists
+      setTimeout( () => {
+        if ( !breakingNewsReplicant.value ) {
+          breakingNewsReplicant.value = defaultBreakingNewsConfig;
+        }
+      }, 100 );
+
+      // Initialize stats
+      updateStats( defaultBreakingNewsConfig );
+    } );
+  </script>
+</body>
+
+</html>

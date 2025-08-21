@@ -8,8 +8,10 @@ export default defineConfig({
       input: {
         graphics: 'graphics/index.html',
         'name-tag-chyron': 'graphics/name-tag-chyron.html',
+        'breaking-news': 'graphics/breaking-news.html',
         dashboard: 'dashboard/controls.html',
         'name-tag-dashboard': 'dashboard/name-tag-chyron.html',
+        'breaking-news-dashboard': 'dashboard/breaking-news.html',
         standalone: 'examples/index.html'
       }
     }
