@@ -239,12 +239,44 @@
         <option value="slide-in">Slide In</option>
         <option value="fade-in">Fade In</option>
         <option value="bounce-in">Bounce In</option>
+        <option value="typewriter">Typewriter Effect</option>
+        <option value="matrix-slide">Matrix Slide</option>
+        <option value="wave-effect">Wave Effect</option>
+        <option value="slide-up-fade">Slide Up Fade</option>
+        <option value="enhanced-pro" selected>Enhanced Pro</option>
       </select>
     </div>
 
     <div class="form-group">
       <label for="duration-input">Animation Duration (ms)</label>
       <input type="number" id="duration-input" min="100" max="5000" step="100" value="600">
+    </div>
+  </div>
+
+  <div class="control-section">
+    <h3>Breaking News Chyron</h3>
+    <div class="form-group">
+      <label>Breaking News Status</label>
+      <div>
+        <span id="breaking-news-status-indicator" class="status-indicator status-hidden"></span>
+        <span id="breaking-news-status-text">Hidden</span>
+      </div>
+    </div>
+
+    <div class="button-group">
+      <button id="breaking-news-show-btn" class="btn btn-primary">Show Breaking News</button>
+      <button id="breaking-news-hide-btn" class="btn btn-secondary">Hide Breaking News</button>
+      <button id="breaking-news-toggle-btn" class="btn btn-danger">Toggle</button>
+    </div>
+
+    <div class="form-group">
+      <label for="breaking-news-text-input">Breaking News Text</label>
+      <textarea id="breaking-news-text-input" rows="3" placeholder="Enter breaking news text..." style="width: 100%; resize: vertical;">This is a breaking news update that will scroll across the screen with professional marquee effect</textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="breaking-news-speed-input">Scroll Speed (seconds)</label>
+      <input type="number" id="breaking-news-speed-input" min="10" max="60" step="5" value="30">
     </div>
   </div>
 
@@ -274,6 +306,7 @@
 
       // NodeCG elements
       const nameTagChyronReplicant = nodecg.Replicant( 'nameTagChyron' );
+      const breakingNewsReplicant = nodecg.Replicant( 'breakingNews' );
 
       // UI elements
       const statusIndicator = document.getElementById( 'status-indicator' );
@@ -281,6 +314,15 @@
       const showBtn = document.getElementById( 'show-btn' );
       const hideBtn = document.getElementById( 'hide-btn' );
       const toggleBtn = document.getElementById( 'toggle-btn' );
+
+      // Breaking News UI elements
+      const breakingNewsStatusIndicator = document.getElementById( 'breaking-news-status-indicator' );
+      const breakingNewsStatusText = document.getElementById( 'breaking-news-status-text' );
+      const breakingNewsShowBtn = document.getElementById( 'breaking-news-show-btn' );
+      const breakingNewsHideBtn = document.getElementById( 'breaking-news-hide-btn' );
+      const breakingNewsToggleBtn = document.getElementById( 'breaking-news-toggle-btn' );
+      const breakingNewsTextInput = document.getElementById( 'breaking-news-text-input' );
+      const breakingNewsSpeedInput = document.getElementById( 'breaking-news-speed-input' );
 
       const nameInput = document.getElementById( 'name-input' );
       const titleInput = document.getElementById( 'title-input' );
@@ -308,8 +350,15 @@
         showName: true,
         showTitle: true,
         showCompany: true,
-        animation: 'slide-in',
+        animation: 'enhanced-pro',
         duration: 600
+      };
+
+      // Default breaking news configuration
+      const defaultBreakingNewsConfig = {
+        visible: false,
+        text: 'This is a breaking news update that will scroll across the screen with professional marquee effect',
+        speed: 30
       };
 
       // Update UI from config
@@ -341,6 +390,23 @@
         updatePreview( config );
       };
 
+      // Update Breaking News UI from config
+      const updateBreakingNewsUI = ( config ) => {
+        breakingNewsTextInput.value = config.text || '';
+        breakingNewsSpeedInput.value = config.speed || 30;
+
+        // Update status
+        if ( config.visible ) {
+          breakingNewsStatusIndicator.classList.remove( 'status-hidden' );
+          breakingNewsStatusIndicator.classList.add( 'status-visible' );
+          breakingNewsStatusText.textContent = 'Visible';
+        } else {
+          breakingNewsStatusIndicator.classList.remove( 'status-visible' );
+          breakingNewsStatusIndicator.classList.add( 'status-hidden' );
+          breakingNewsStatusText.textContent = 'Hidden';
+        }
+      };
+
       // Update preview
       const updatePreview = ( config ) => {
         previewName.textContent = config.name || '';
@@ -367,6 +433,16 @@
         };
       };
 
+      // Update breaking news replicant
+      const updateBreakingNewsReplicant = () => {
+        const currentVisible = breakingNewsReplicant.value ? breakingNewsReplicant.value.visible : false;
+        breakingNewsReplicant.value = {
+          text: breakingNewsTextInput.value,
+          speed: parseInt( breakingNewsSpeedInput.value ),
+          visible: currentVisible
+        };
+      };
+
       // Event listeners for buttons
       showBtn.addEventListener( 'click', () => {
         const currentConfig = nameTagChyronReplicant.value || defaultConfig;
@@ -382,6 +458,26 @@
         const currentConfig = nameTagChyronReplicant.value || defaultConfig;
         nameTagChyronReplicant.value = { ...currentConfig, visible: !currentConfig.visible };
       } );
+
+      // Breaking News Event listeners for buttons
+      breakingNewsShowBtn.addEventListener( 'click', () => {
+        const currentConfig = breakingNewsReplicant.value || defaultBreakingNewsConfig;
+        breakingNewsReplicant.value = { ...currentConfig, visible: true };
+      } );
+
+      breakingNewsHideBtn.addEventListener( 'click', () => {
+        const currentConfig = breakingNewsReplicant.value || defaultBreakingNewsConfig;
+        breakingNewsReplicant.value = { ...currentConfig, visible: false };
+      } );
+
+      breakingNewsToggleBtn.addEventListener( 'click', () => {
+        const currentConfig = breakingNewsReplicant.value || defaultBreakingNewsConfig;
+        breakingNewsReplicant.value = { ...currentConfig, visible: !currentConfig.visible };
+      } );
+
+      // Breaking News Event listeners for inputs
+      breakingNewsTextInput.addEventListener( 'input', updateBreakingNewsReplicant );
+      breakingNewsSpeedInput.addEventListener( 'input', updateBreakingNewsReplicant );
 
       // Event listeners for inputs
       nameInput.addEventListener( 'input', updateReplicant );
@@ -418,10 +514,19 @@
         }
       } );
 
+      breakingNewsReplicant.on( 'change', ( newVal ) => {
+        if ( newVal ) {
+          updateBreakingNewsUI( newVal );
+        }
+      } );
+
       // Initialize with default values if no replicant exists
       setTimeout( () => {
         if ( !nameTagChyronReplicant.value ) {
           nameTagChyronReplicant.value = defaultConfig;
+        }
+        if ( !breakingNewsReplicant.value ) {
+          breakingNewsReplicant.value = defaultBreakingNewsConfig;
         }
       }, 100 );
 
