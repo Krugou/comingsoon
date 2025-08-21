@@ -18,6 +18,13 @@
         "width": 3,
         "file": "name-tag-chyron.html",
         "headerColor": "#0F79C6"
+      },
+      {
+        "name": "breaking-news",
+        "title": "Breaking News",
+        "width": 3,
+        "file": "breaking-news.html",
+        "headerColor": "#dc2626"
       }
     ],
     "graphics": [
@@ -28,6 +35,11 @@
       },
       {
         "file": "name-tag-chyron.html",
+        "width": 1920,
+        "height": 1080
+      },
+      {
+        "file": "breaking-news.html",
         "width": 1920,
         "height": 1080
       }
