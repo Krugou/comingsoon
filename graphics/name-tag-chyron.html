@@ -43,6 +43,134 @@
       transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
+    /* Breaking News Chyron Styles */
+    .breaking-news-container {
+      position: fixed;
+      top: 40px;
+      left: 0;
+      right: 0;
+      z-index: 2000;
+      height: 60px;
+    }
+
+    .breaking-news-hidden {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+
+    .breaking-news-visible {
+      transform: translateY(0);
+      opacity: 1;
+      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .breaking-news-banner {
+      display: flex;
+      height: 100%;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+      box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+      border-bottom: 3px solid #fbbf24;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .breaking-news-banner::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      animation: breakingNewsShine 3s ease-in-out infinite;
+    }
+
+    .breaking-news-label {
+      display: flex;
+      align-items: center;
+      background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+      padding: 0 24px;
+      min-width: 200px;
+      border-right: 3px solid #fbbf24;
+      position: relative;
+      z-index: 1;
+    }
+
+    .breaking-news-flash {
+      width: 8px;
+      height: 8px;
+      background: #fbbf24;
+      border-radius: 50%;
+      margin: 0 8px;
+      animation: breakingNewsFlash 1s ease-in-out infinite;
+      box-shadow: 0 0 10px #fbbf24;
+    }
+
+    .breaking-news-flash-delay {
+      animation-delay: 0.5s;
+    }
+
+    .breaking-news-text {
+      font-family: 'Lexend Mega', sans-serif;
+      font-weight: 900;
+      font-size: 16px;
+      color: #ffffff;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      letter-spacing: 1px;
+    }
+
+    .breaking-news-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      background: linear-gradient(90deg, rgba(0, 0, 0, 0.1) 0%, transparent 10%, transparent 90%, rgba(0, 0, 0, 0.1) 100%);
+    }
+
+    .breaking-news-marquee {
+      font-family: 'Lexend Mega', sans-serif;
+      font-weight: 600;
+      font-size: 18px;
+      color: #ffffff;
+      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+      white-space: nowrap;
+      animation: breakingNewsScroll 30s linear infinite;
+      padding-left: 100%;
+    }
+
+    @keyframes breakingNewsScroll {
+      0% {
+        transform: translateX(0);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+
+    @keyframes breakingNewsFlash {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.3;
+        transform: scale(1.2);
+      }
+    }
+
+    @keyframes breakingNewsShine {
+      0% {
+        left: -100%;
+      }
+      50% {
+        left: 100%;
+      }
+      100% {
+        left: 100%;
+      }
+    }
+
     /* Custom animations since we can't rely on TailwindCSS CDN */
     @keyframes slideInLeft {
       0% {
@@ -130,6 +258,119 @@
       }
     }
 
+    /* Advanced Professional Animations */
+    @keyframes typewriter {
+      from {
+        width: 0;
+        opacity: 1;
+      }
+      to {
+        width: 100%;
+        opacity: 1;
+      }
+    }
+
+    @keyframes matrixSlide {
+      0% {
+        transform: translateY(-100%) rotateX(90deg);
+        opacity: 0;
+        filter: blur(10px);
+      }
+      50% {
+        transform: translateY(-20%) rotateX(45deg);
+        opacity: 0.7;
+        filter: blur(5px);
+      }
+      100% {
+        transform: translateY(0) rotateX(0deg);
+        opacity: 1;
+        filter: blur(0px);
+      }
+    }
+
+    @keyframes textShimmer {
+      0% {
+        background-position: -200% center;
+      }
+      100% {
+        background-position: 200% center;
+      }
+    }
+
+    @keyframes waveEffect {
+      0%, 100% {
+        transform: translateY(0) rotateZ(0deg);
+        opacity: 0;
+      }
+      25% {
+        transform: translateY(-10px) rotateZ(2deg);
+        opacity: 0.5;
+      }
+      50% {
+        transform: translateY(0) rotateZ(0deg);
+        opacity: 1;
+      }
+      75% {
+        transform: translateY(5px) rotateZ(-1deg);
+        opacity: 0.8;
+      }
+    }
+
+    @keyframes particleFloat {
+      0%, 100% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0.3;
+      }
+      25% {
+        transform: translateY(-15px) translateX(5px) rotate(90deg);
+        opacity: 0.7;
+      }
+      50% {
+        transform: translateY(-25px) translateX(-5px) rotate(180deg);
+        opacity: 1;
+      }
+      75% {
+        transform: translateY(-10px) translateX(10px) rotate(270deg);
+        opacity: 0.5;
+      }
+    }
+
+    @keyframes enhancedGlow {
+      0%, 100% {
+        text-shadow: 
+          0 0 5px currentColor,
+          0 0 10px currentColor,
+          0 0 15px currentColor;
+        filter: brightness(1);
+      }
+      50% {
+        text-shadow: 
+          0 0 10px currentColor,
+          0 0 20px currentColor,
+          0 0 30px currentColor,
+          0 0 40px currentColor;
+        filter: brightness(1.2);
+      }
+    }
+
+    @keyframes slideUpFade {
+      0% {
+        transform: translateY(50px) scale(0.8);
+        opacity: 0;
+        filter: blur(8px);
+      }
+      60% {
+        transform: translateY(-5px) scale(1.02);
+        opacity: 0.8;
+        filter: blur(2px);
+      }
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        filter: blur(0);
+      }
+    }
+
     .animate-slide-in-left {
       animation: slideInLeft 0.6s ease-out;
     }
@@ -152,6 +393,63 @@
 
     .animate-bounce-in {
       animation: bounceIn var(--chyron-anim-duration, 0.6s) cubic-bezier(.34, 1.56, .64, 1);
+    }
+
+    /* Enhanced Animation Classes */
+    .animate-typewriter {
+      animation: typewriter 1.2s steps(20) ease-out;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid currentColor;
+    }
+
+    .animate-matrix-slide {
+      animation: matrixSlide 0.8s cubic-bezier(.25, .46, .45, .94);
+    }
+
+    .animate-wave-effect {
+      animation: waveEffect 1s ease-in-out;
+    }
+
+    .animate-slide-up-fade {
+      animation: slideUpFade 0.7s cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .animate-enhanced-glow {
+      animation: enhancedGlow 2s ease-in-out infinite;
+    }
+
+    .text-shimmer {
+      background: linear-gradient(
+        90deg,
+        currentColor 0%,
+        rgba(255, 255, 255, 0.8) 50%,
+        currentColor 100%
+      );
+      background-size: 200% 100%;
+      background-clip: text;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textShimmer 2s ease-in-out infinite;
+    }
+
+    .particle-bg {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: currentColor;
+      border-radius: 50%;
+      animation: particleFloat 3s ease-in-out infinite;
+    }
+
+    .particle-bg:nth-child(odd) {
+      animation-delay: -1s;
+      animation-duration: 4s;
+    }
+
+    .particle-bg:nth-child(even) {
+      animation-delay: -2s;
+      animation-duration: 3.5s;
     }
 
     .animation-delay-200 {
@@ -469,11 +767,38 @@
         <div
           class="absolute -right-1 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-secondaryBlue rounded-full animate-bounce-subtle animation-delay-200">
         </div>
+
+        <!-- Floating particle effects -->
+        <div class="absolute top-2 left-8 particle-bg" style="color: rgba(251, 122, 174, 0.4);"></div>
+        <div class="absolute top-4 right-12 particle-bg" style="color: rgba(15, 121, 198, 0.3);"></div>
+        <div class="absolute bottom-3 left-16 particle-bg" style="color: rgba(251, 122, 174, 0.5);"></div>
+        <div class="absolute bottom-5 right-8 particle-bg" style="color: rgba(15, 121, 198, 0.4);"></div>
+        <div class="absolute top-6 left-24 particle-bg" style="color: rgba(251, 122, 174, 0.2);"></div>
       </div>
 
       <!-- Bottom highlight line -->
       <div
         class="absolute bottom-0 left-4 right-4 h-0.5 bg-gradient-to-r from-transparent via-accentPink to-transparent opacity-70">
+      </div>
+    </div>
+  </div>
+
+  <!-- Breaking News Chyron -->
+  <div id="breaking-news-chyron" class="breaking-news-container breaking-news-hidden">
+    <!-- Breaking News Banner -->
+    <div class="breaking-news-banner">
+      <!-- Flashing "BREAKING NEWS" indicator -->
+      <div class="breaking-news-label">
+        <div class="breaking-news-flash">●</div>
+        <span class="breaking-news-text">BREAKING NEWS</span>
+        <div class="breaking-news-flash breaking-news-flash-delay">●</div>
+      </div>
+      
+      <!-- Scrolling news content -->
+      <div class="breaking-news-content">
+        <div class="breaking-news-marquee" id="breaking-news-text">
+          This is a breaking news update that will scroll across the screen with professional marquee effect
+        </div>
       </div>
     </div>
   </div>
@@ -495,8 +820,15 @@
         showName: true,
         showTitle: true,
         showCompany: true,
-        animation: 'slide-in',
+        animation: 'enhanced-pro',
         duration: 600
+      };
+
+      // Breaking News configuration
+      let breakingNewsConfig = {
+        visible: false,
+        text: 'This is a breaking news update that will scroll across the screen with professional marquee effect',
+        speed: 30 // seconds for full scroll
       };
 
       const animationClassSets = {
@@ -514,11 +846,40 @@
           name: 'animate-bounce-in',
           title: 'animate-bounce-in',
           company: 'animate-bounce-in'
+        } ),
+        'typewriter': () => ( {
+          name: 'animate-typewriter',
+          title: 'animate-typewriter',
+          company: 'animate-typewriter'
+        } ),
+        'matrix-slide': () => ( {
+          name: 'animate-matrix-slide',
+          title: 'animate-matrix-slide animation-delay-200',
+          company: 'animate-matrix-slide animation-delay-400'
+        } ),
+        'wave-effect': () => ( {
+          name: 'animate-wave-effect',
+          title: 'animate-wave-effect animation-delay-200',
+          company: 'animate-wave-effect animation-delay-400'
+        } ),
+        'slide-up-fade': () => ( {
+          name: 'animate-slide-up-fade',
+          title: 'animate-slide-up-fade animation-delay-200',
+          company: 'animate-slide-up-fade animation-delay-400'
+        } ),
+        'enhanced-pro': () => ( {
+          name: 'animate-slide-up-fade animate-enhanced-glow',
+          title: 'animate-matrix-slide animation-delay-200',
+          company: 'animate-wave-effect animation-delay-400'
         } )
       };
 
       const clearAnimationClasses = ( el ) => {
-        el.classList.remove( 'animate-slide-in-left', 'animate-slide-in-right', 'animate-fade-in', 'animate-bounce-in' );
+        el.classList.remove( 
+          'animate-slide-in-left', 'animate-slide-in-right', 'animate-fade-in', 'animate-bounce-in',
+          'animate-typewriter', 'animate-matrix-slide', 'animate-wave-effect', 'animate-slide-up-fade',
+          'animate-enhanced-glow', 'text-shimmer'
+        );
       };
 
       const applyElementVisibility = () => {
@@ -533,9 +894,18 @@
         const durMs = Math.max( 100, parseInt( chyronConfig.duration || 600 ) );
         chyronElement.style.setProperty( '--chyron-anim-duration', durMs + 'ms' );
         [ nameElement, titleElement, companyElement ].forEach( clearAnimationClasses );
-        if ( chyronConfig.showName !== false ) nameElement.classList.add( set.name );
-        if ( chyronConfig.showTitle !== false ) titleElement.classList.add( set.title );
-        if ( chyronConfig.showCompany !== false && chyronConfig.company ) companyElement.classList.add( set.company );
+        
+        // Helper function to add multiple classes
+        const addClasses = (element, classString) => {
+          if (classString) {
+            const classes = classString.split(' ').filter(c => c.trim());
+            classes.forEach(className => element.classList.add(className));
+          }
+        };
+        
+        if ( chyronConfig.showName !== false ) addClasses(nameElement, set.name);
+        if ( chyronConfig.showTitle !== false ) addClasses(titleElement, set.title);
+        if ( chyronConfig.showCompany !== false && chyronConfig.company ) addClasses(companyElement, set.company);
       };
 
       const showChyron = () => {
@@ -559,11 +929,35 @@
         applyElementVisibility();
       };
 
+      // Breaking News Functions
+      const breakingNewsElement = document.getElementById( 'breaking-news-chyron' );
+      const breakingNewsTextElement = document.getElementById( 'breaking-news-text' );
+
+      const showBreakingNews = () => {
+        breakingNewsElement.classList.remove( 'breaking-news-hidden' );
+        breakingNewsElement.classList.add( 'breaking-news-visible' );
+      };
+
+      const hideBreakingNews = () => {
+        breakingNewsElement.classList.remove( 'breaking-news-visible' );
+        breakingNewsElement.classList.add( 'breaking-news-hidden' );
+      };
+
+      const updateBreakingNews = ( config ) => {
+        if ( config.text !== undefined ) {
+          breakingNewsTextElement.textContent = config.text;
+        }
+        if ( config.speed !== undefined ) {
+          breakingNewsTextElement.style.animationDuration = config.speed + 's';
+        }
+      };
+
       // NodeCG integration
       if ( typeof nodecg !== 'undefined' ) {
         console.log( 'NodeCG detected, setting up replicants' );
 
         const chyronReplicant = nodecg.Replicant( 'nameTagChyron' );
+        const breakingNewsReplicant = nodecg.Replicant( 'breakingNews' );
 
         chyronReplicant.on( 'change', ( newVal ) => {
           if ( newVal ) {
@@ -580,10 +974,28 @@
           }
         } );
 
+        breakingNewsReplicant.on( 'change', ( newVal ) => {
+          if ( newVal ) {
+            console.log( 'Breaking News config changed:', newVal );
+            breakingNewsConfig = { ...breakingNewsConfig, ...newVal };
+
+            updateBreakingNews( breakingNewsConfig );
+
+            if ( breakingNewsConfig.visible ) {
+              showBreakingNews();
+            } else {
+              hideBreakingNews();
+            }
+          }
+        } );
+
         // Initialize with default values if no replicant exists
         setTimeout( () => {
           if ( !chyronReplicant.value ) {
             chyronReplicant.value = chyronConfig;
+          }
+          if ( !breakingNewsReplicant.value ) {
+            breakingNewsReplicant.value = breakingNewsConfig;
           }
         }, 100 );
       } else {
@@ -594,12 +1006,17 @@
           showChyron();
         }, 1000 );
 
-        // Hide after 5 seconds in demo mode
+        // Show breaking news after 2 seconds
+        setTimeout( () => {
+          showBreakingNews();
+        }, 2000 );
+
+        // Hide chyron after 5 seconds in demo mode
         setTimeout( () => {
           hideChyron();
         }, 6000 );
 
-        // Show again after 8 seconds with different content
+        // Show chyron again after 8 seconds with different content
         setTimeout( () => {
           updateContent( {
             name: 'Jane Doe',
@@ -608,6 +1025,13 @@
           } );
           showChyron();
         }, 8000 );
+
+        // Demo breaking news updates
+        setTimeout( () => {
+          updateBreakingNews( {
+            text: 'MAJOR TECH BREAKTHROUGH: New revolutionary development announced by leading technology company, changing the industry landscape forever'
+          } );
+        }, 10000 );
       }
 
       // Keyboard shortcuts for testing
@@ -618,6 +1042,14 @@
             showChyron();
           } else {
             hideChyron();
+          }
+        }
+        if ( event.key === 'b' ) {
+          breakingNewsConfig.visible = !breakingNewsConfig.visible;
+          if ( breakingNewsConfig.visible ) {
+            showBreakingNews();
+          } else {
+            hideBreakingNews();
           }
         }
       } );
