@@ -54,7 +54,7 @@
     ]
   },
   "dependencies": {
-    "nodecg": "^2.6.1",
+    "nodecg": "^2.6.4",
     "three": "^0.168.0"
   },
   "devDependencies": {
