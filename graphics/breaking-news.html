@@ -1,275 +1,284 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Breaking News Chyron - NodeCG Graphics</title>
+    <meta name="description" content="Breaking News Chyron Graphics for NodeCG" />
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Breaking News Chyron - NodeCG Graphics</title>
-  <meta name="description" content="Breaking News Chyron Graphics for NodeCG">
+    <!-- Lexend Mega font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- Lexend Mega font from Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@100..900&display=swap" rel="stylesheet">
+    <!-- TailwindCSS build -->
+    <link rel="stylesheet" href="../dist/assets/styles.css" />
 
-  <!-- TailwindCSS build -->
-  <link rel="stylesheet" href="../dist/assets/styles.css">
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@100..900&display=swap');
 
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@100..900&display=swap');
-
-    body {
-      margin: 0;
-      overflow: hidden;
-      background: transparent;
-      font-family: 'Lexend Mega', sans-serif;
-    }
-
-    /* Breaking News Chyron Styles */
-    .breaking-news-container {
-      position: fixed;
-      top: 40px;
-      left: 0;
-      right: 0;
-      z-index: 2000;
-      height: 60px;
-    }
-
-    .breaking-news-hidden {
-      transform: translateY(-100%);
-      opacity: 0;
-    }
-
-    .breaking-news-visible {
-      transform: translateY(0);
-      opacity: 1;
-      transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-
-    .breaking-news-banner {
-      display: flex;
-      height: 100%;
-      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
-      box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
-      border-bottom: 3px solid #fbbf24;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .breaking-news-banner::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-      animation: breakingNewsShine 3s ease-in-out infinite;
-    }
-
-    .breaking-news-label {
-      display: flex;
-      align-items: center;
-      background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
-      padding: 0 24px;
-      min-width: 200px;
-      border-right: 3px solid #fbbf24;
-      position: relative;
-      z-index: 1;
-    }
-
-    .breaking-news-flash {
-      width: 8px;
-      height: 8px;
-      background: #fbbf24;
-      border-radius: 50%;
-      margin: 0 8px;
-      animation: breakingNewsFlash 1s ease-in-out infinite;
-      box-shadow: 0 0 10px #fbbf24;
-    }
-
-    .breaking-news-flash-delay {
-      animation-delay: 0.5s;
-    }
-
-    .breaking-news-text {
-      font-family: 'Lexend Mega', sans-serif;
-      font-weight: 900;
-      font-size: 16px;
-      color: #ffffff;
-      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-      letter-spacing: 1px;
-    }
-
-    .breaking-news-content {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      position: relative;
-      background: linear-gradient(90deg, rgba(0, 0, 0, 0.1) 0%, transparent 10%, transparent 90%, rgba(0, 0, 0, 0.1) 100%);
-    }
-
-    .breaking-news-marquee {
-      font-family: 'Lexend Mega', sans-serif;
-      font-weight: 600;
-      font-size: 18px;
-      color: #ffffff;
-      text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-      white-space: nowrap;
-      animation: breakingNewsScroll 30s linear infinite;
-      padding-left: 100%;
-    }
-
-    @keyframes breakingNewsScroll {
-      0% {
-        transform: translateX(0);
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: transparent;
+        font-family: 'Lexend Mega', sans-serif;
       }
-      100% {
-        transform: translateX(-100%);
-      }
-    }
 
-    @keyframes breakingNewsFlash {
-      0%, 100% {
+      /* Breaking News Chyron Styles */
+      .breaking-news-container {
+        position: fixed;
+        top: 40px;
+        left: 0;
+        right: 0;
+        z-index: 2000;
+        height: 60px;
+      }
+
+      .breaking-news-hidden {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+
+      .breaking-news-visible {
+        transform: translateY(0);
         opacity: 1;
-        transform: scale(1);
+        transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
       }
-      50% {
-        opacity: 0.3;
-        transform: scale(1.2);
-      }
-    }
 
-    @keyframes breakingNewsShine {
-      0% {
+      .breaking-news-banner {
+        display: flex;
+        height: 100%;
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 50%, #991b1b 100%);
+        box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4);
+        border-bottom: 3px solid #fbbf24;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .breaking-news-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
         left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        animation: breakingNewsShine 3s ease-in-out infinite;
       }
-      50% {
-        left: 100%;
-      }
-      100% {
-        left: 100%;
-      }
-    }
-  </style>
-</head>
 
-<body class="bg-transparent">
-  <!-- Breaking News Chyron -->
-  <div id="breaking-news-chyron" class="breaking-news-container breaking-news-hidden">
-    <!-- Breaking News Banner -->
-    <div class="breaking-news-banner">
-      <!-- Flashing "BREAKING NEWS" indicator -->
-      <div class="breaking-news-label">
-        <div class="breaking-news-flash">●</div>
-        <span class="breaking-news-text">BREAKING NEWS</span>
-        <div class="breaking-news-flash breaking-news-flash-delay">●</div>
-      </div>
-      
-      <!-- Scrolling news content -->
-      <div class="breaking-news-content">
-        <div class="breaking-news-marquee" id="breaking-news-text">
-          This is a breaking news update that will scroll across the screen with professional marquee effect
+      .breaking-news-label {
+        display: flex;
+        align-items: center;
+        background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%);
+        padding: 0 24px;
+        min-width: 200px;
+        border-right: 3px solid #fbbf24;
+        position: relative;
+        z-index: 1;
+      }
+
+      .breaking-news-flash {
+        width: 8px;
+        height: 8px;
+        background: #fbbf24;
+        border-radius: 50%;
+        margin: 0 8px;
+        animation: breakingNewsFlash 1s ease-in-out infinite;
+        box-shadow: 0 0 10px #fbbf24;
+      }
+
+      .breaking-news-flash-delay {
+        animation-delay: 0.5s;
+      }
+
+      .breaking-news-text {
+        font-family: 'Lexend Mega', sans-serif;
+        font-weight: 900;
+        font-size: 16px;
+        color: #ffffff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        letter-spacing: 1px;
+      }
+
+      .breaking-news-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        position: relative;
+        background: linear-gradient(
+          90deg,
+          rgba(0, 0, 0, 0.1) 0%,
+          transparent 10%,
+          transparent 90%,
+          rgba(0, 0, 0, 0.1) 100%
+        );
+      }
+
+      .breaking-news-marquee {
+        font-family: 'Lexend Mega', sans-serif;
+        font-weight: 600;
+        font-size: 18px;
+        color: #ffffff;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        white-space: nowrap;
+        animation: breakingNewsScroll 30s linear infinite;
+        padding-left: 100%;
+      }
+
+      @keyframes breakingNewsScroll {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+
+      @keyframes breakingNewsFlash {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.3;
+          transform: scale(1.2);
+        }
+      }
+
+      @keyframes breakingNewsShine {
+        0% {
+          left: -100%;
+        }
+        50% {
+          left: 100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body class="bg-transparent">
+    <!-- Breaking News Chyron -->
+    <div id="breaking-news-chyron" class="breaking-news-container breaking-news-hidden">
+      <!-- Breaking News Banner -->
+      <div class="breaking-news-banner">
+        <!-- Flashing "BREAKING NEWS" indicator -->
+        <div class="breaking-news-label">
+          <div class="breaking-news-flash">●</div>
+          <span class="breaking-news-text">BREAKING NEWS</span>
+          <div class="breaking-news-flash breaking-news-flash-delay">●</div>
+        </div>
+
+        <!-- Scrolling news content -->
+        <div class="breaking-news-content">
+          <div class="breaking-news-marquee" id="breaking-news-text">
+            This is a breaking news update that will scroll across the screen with professional
+            marquee effect
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- NodeCG integration script -->
-  <script>
-    document.addEventListener( 'DOMContentLoaded', () => {
-      // Breaking News configuration
-      let breakingNewsConfig = {
-        visible: false,
-        text: 'This is a breaking news update that will scroll across the screen with professional marquee effect',
-        speed: 30 // seconds for full scroll
-      };
+    <!-- NodeCG integration script -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Breaking News configuration
+        let breakingNewsConfig = {
+          visible: false,
+          text: 'This is a breaking news update that will scroll across the screen with professional marquee effect',
+          speed: 30, // seconds for full scroll
+        };
 
-      // Breaking News Functions
-      const breakingNewsElement = document.getElementById( 'breaking-news-chyron' );
-      const breakingNewsTextElement = document.getElementById( 'breaking-news-text' );
+        // Breaking News Functions
+        const breakingNewsElement = document.getElementById('breaking-news-chyron');
+        const breakingNewsTextElement = document.getElementById('breaking-news-text');
 
-      const showBreakingNews = () => {
-        breakingNewsElement.classList.remove( 'breaking-news-hidden' );
-        breakingNewsElement.classList.add( 'breaking-news-visible' );
-      };
+        const showBreakingNews = () => {
+          breakingNewsElement.classList.remove('breaking-news-hidden');
+          breakingNewsElement.classList.add('breaking-news-visible');
+        };
 
-      const hideBreakingNews = () => {
-        breakingNewsElement.classList.remove( 'breaking-news-visible' );
-        breakingNewsElement.classList.add( 'breaking-news-hidden' );
-      };
+        const hideBreakingNews = () => {
+          breakingNewsElement.classList.remove('breaking-news-visible');
+          breakingNewsElement.classList.add('breaking-news-hidden');
+        };
 
-      const updateBreakingNews = ( config ) => {
-        if ( config.text !== undefined ) {
-          breakingNewsTextElement.textContent = config.text;
+        const updateBreakingNews = (config) => {
+          if (config.text !== undefined) {
+            breakingNewsTextElement.textContent = config.text;
+          }
+          if (config.speed !== undefined) {
+            breakingNewsTextElement.style.animationDuration = config.speed + 's';
+          }
+        };
+
+        // NodeCG integration
+        if (typeof nodecg !== 'undefined') {
+          console.log('NodeCG detected, setting up breaking news replicant');
+
+          const breakingNewsReplicant = nodecg.Replicant('breakingNews');
+
+          breakingNewsReplicant.on('change', (newVal) => {
+            if (newVal) {
+              console.log('Breaking News config changed:', newVal);
+              breakingNewsConfig = { ...breakingNewsConfig, ...newVal };
+
+              updateBreakingNews(breakingNewsConfig);
+
+              if (breakingNewsConfig.visible) {
+                showBreakingNews();
+              } else {
+                hideBreakingNews();
+              }
+            }
+          });
+
+          // Initialize with default values if no replicant exists
+          setTimeout(() => {
+            if (!breakingNewsReplicant.value) {
+              breakingNewsReplicant.value = breakingNewsConfig;
+            }
+          }, 100);
+        } else {
+          console.log('NodeCG not detected, running in standalone mode');
+
+          // Demo mode - show breaking news after 2 seconds
+          setTimeout(() => {
+            showBreakingNews();
+          }, 2000);
+
+          // Demo breaking news updates
+          setTimeout(() => {
+            updateBreakingNews({
+              text: 'MAJOR TECH BREAKTHROUGH: New revolutionary development announced by leading technology company, changing the industry landscape forever',
+            });
+          }, 5000);
+
+          // Hide after 10 seconds in demo mode
+          setTimeout(() => {
+            hideBreakingNews();
+          }, 15000);
         }
-        if ( config.speed !== undefined ) {
-          breakingNewsTextElement.style.animationDuration = config.speed + 's';
-        }
-      };
 
-      // NodeCG integration
-      if ( typeof nodecg !== 'undefined' ) {
-        console.log( 'NodeCG detected, setting up breaking news replicant' );
-
-        const breakingNewsReplicant = nodecg.Replicant( 'breakingNews' );
-
-        breakingNewsReplicant.on( 'change', ( newVal ) => {
-          if ( newVal ) {
-            console.log( 'Breaking News config changed:', newVal );
-            breakingNewsConfig = { ...breakingNewsConfig, ...newVal };
-
-            updateBreakingNews( breakingNewsConfig );
-
-            if ( breakingNewsConfig.visible ) {
+        // Keyboard shortcuts for testing
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'b') {
+            breakingNewsConfig.visible = !breakingNewsConfig.visible;
+            if (breakingNewsConfig.visible) {
               showBreakingNews();
             } else {
               hideBreakingNews();
             }
           }
-        } );
-
-        // Initialize with default values if no replicant exists
-        setTimeout( () => {
-          if ( !breakingNewsReplicant.value ) {
-            breakingNewsReplicant.value = breakingNewsConfig;
-          }
-        }, 100 );
-      } else {
-        console.log( 'NodeCG not detected, running in standalone mode' );
-
-        // Demo mode - show breaking news after 2 seconds
-        setTimeout( () => {
-          showBreakingNews();
-        }, 2000 );
-
-        // Demo breaking news updates
-        setTimeout( () => {
-          updateBreakingNews( {
-            text: 'MAJOR TECH BREAKTHROUGH: New revolutionary development announced by leading technology company, changing the industry landscape forever'
-          } );
-        }, 5000 );
-
-        // Hide after 10 seconds in demo mode
-        setTimeout( () => {
-          hideBreakingNews();
-        }, 15000 );
-      }
-
-      // Keyboard shortcuts for testing
-      document.addEventListener( 'keydown', ( event ) => {
-        if ( event.key === 'b' ) {
-          breakingNewsConfig.visible = !breakingNewsConfig.visible;
-          if ( breakingNewsConfig.visible ) {
-            showBreakingNews();
-          } else {
-            hideBreakingNews();
-          }
-        }
-      } );
-    } );
-  </script>
-</body>
-
+        });
+      });
+    </script>
+  </body>
 </html>

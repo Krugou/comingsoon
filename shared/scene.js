@@ -33,7 +33,7 @@ export class ComingSoonScene {
       duration: this.config.animation.explosionDuration,
       meshes: [],
       originalPositions: [],
-      originalRotations: []
+      originalRotations: [],
     };
 
     // Event handlers
@@ -46,35 +46,35 @@ export class ComingSoonScene {
   mergeConfig(userConfig) {
     const defaultConfig = {
       title: {
-        text: "EXAMPLE SITE",
+        text: 'EXAMPLE SITE',
         color: 0x002ea2,
         size: 1.2,
-        yPos: 3
+        yPos: 3,
       },
       subtitle: {
-        text: "COMING SOON 2025",
+        text: 'COMING SOON 2025',
         color: 0xf7fafc,
         size: 0.8,
-        yPos: -2
+        yPos: -2,
       },
       attribution: {
-        text: "Example Company & Partner Organization",
+        text: 'Example Company & Partner Organization',
         color: 0x637786,
         size: 0.4,
-        yPos: -5.5
+        yPos: -5.5,
       },
       background: {
-        color: 0x242D38,
+        color: 0x242d38,
         particleCount: 1000,
         particleColor: 0xf7fafc,
         particleSize: 0.1,
-        particleOpacity: 0.6
+        particleOpacity: 0.6,
       },
       animation: {
         explosionDuration: 6000,
         explosionStrength: 15,
-        rotationStrength: 3
-      }
+        rotationStrength: 3,
+      },
     };
 
     return this.deepMerge(defaultConfig, userConfig);
@@ -111,7 +111,7 @@ export class ComingSoonScene {
       try {
         this.renderer = new THREE.WebGLRenderer({
           antialias: true,
-          powerPreference: 'high-performance'
+          powerPreference: 'high-performance',
         });
 
         if (!this.renderer) throw new SceneError('WebGL renderer creation failed');
@@ -156,7 +156,7 @@ export class ComingSoonScene {
 
       return true;
     } catch (error) {
-      console.error("Error initializing scene:", error);
+      console.error('Error initializing scene:', error);
       throw error;
     }
   }
@@ -178,7 +178,7 @@ export class ComingSoonScene {
       color: this.config.background.particleColor,
       size: this.config.background.particleSize,
       transparent: true,
-      opacity: this.config.background.particleOpacity
+      opacity: this.config.background.particleOpacity,
     });
 
     this.particles = new THREE.Points(geometry, material);
@@ -218,16 +218,12 @@ export class ComingSoonScene {
       if (attribution.textMesh) this.textMeshes.push(attribution.textMesh);
 
       // Add all meshes to animation state
-      this.animState.meshes = [
-        ...title.meshes,
-        ...subtitle.meshes,
-        ...attribution.meshes
-      ];
+      this.animState.meshes = [...title.meshes, ...subtitle.meshes, ...attribution.meshes];
 
       // Save original positions for explosion animation
       this.saveOriginalPositions();
     } catch (error) {
-      console.error("Error creating text:", error);
+      console.error('Error creating text:', error);
       throw error;
     }
   }
@@ -251,16 +247,13 @@ export class ComingSoonScene {
         continue;
       }
 
-      const cube = new THREE.Mesh(
-        new THREE.BoxGeometry(size, size, size * 0.5),
-        material.clone()
-      );
+      const cube = new THREE.Mesh(new THREE.BoxGeometry(size, size, size * 0.5), material.clone());
 
       cube.position.set(xPos, yPos, 0);
       cube.userData = {
         isLetter: true,
         originalPosition: { x: xPos, y: yPos, z: 0 },
-        originalRotation: { x: 0, y: 0, z: 0 }
+        originalRotation: { x: 0, y: 0, z: 0 },
       };
 
       group.add(cube);
@@ -276,16 +269,16 @@ export class ComingSoonScene {
     this.animState.originalPositions = [];
     this.animState.originalRotations = [];
 
-    this.animState.meshes.forEach(mesh => {
+    this.animState.meshes.forEach((mesh) => {
       this.animState.originalPositions.push({
         x: mesh.position.x,
         y: mesh.position.y,
-        z: mesh.position.z
+        z: mesh.position.z,
       });
       this.animState.originalRotations.push({
         x: mesh.rotation.x,
         y: mesh.rotation.y,
-        z: mesh.rotation.z
+        z: mesh.rotation.z,
       });
     });
   }
@@ -315,7 +308,7 @@ export class ComingSoonScene {
       if (progress >= 1) {
         // Reset explosion
         this.animState.exploding = false;
-        this.textGroups.forEach(group => {
+        this.textGroups.forEach((group) => {
           group.position.set(0, 0, 0);
           group.rotation.set(0, 0, 0);
         });
@@ -330,11 +323,7 @@ export class ComingSoonScene {
           const randomY = (Math.random() - 0.5) * strength * progress;
           const randomZ = (Math.random() - 0.5) * strength * progress;
 
-          mesh.position.set(
-            original.x + randomX,
-            original.y + randomY,
-            original.z + randomZ
-          );
+          mesh.position.set(original.x + randomX, original.y + randomY, original.z + randomZ);
 
           mesh.rotation.set(
             Math.random() * rotation * progress,
@@ -350,7 +339,7 @@ export class ComingSoonScene {
       try {
         this.renderer.render(this.scene, this.camera);
       } catch (error) {
-        console.error("Render error:", error);
+        console.error('Render error:', error);
         cancelAnimationFrame(this.animationId);
       }
     }
@@ -396,11 +385,11 @@ export class ComingSoonScene {
 
     // Dispose of geometries and materials
     if (this.scene) {
-      this.scene.traverse(object => {
+      this.scene.traverse((object) => {
         if (object.geometry) object.geometry.dispose();
         if (object.material) {
           if (Array.isArray(object.material)) {
-            object.material.forEach(material => material.dispose());
+            object.material.forEach((material) => material.dispose());
           } else {
             object.material.dispose();
           }

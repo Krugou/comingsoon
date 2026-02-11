@@ -1,471 +1,478 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Name Tag Chyron Controls</title>
-  <style>
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      margin: 0;
-      padding: 16px;
-      background: #f5f5f5;
-    }
-
-    .control-section {
-      background: white;
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .control-section h3 {
-      margin: 0 0 12px 0;
-      color: #333;
-      font-size: 14px;
-      font-weight: 600;
-    }
-
-    .form-group {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 12px;
-    }
-
-    .form-group label {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 4px;
-      font-weight: 500;
-    }
-
-    .form-group input,
-    .form-group select {
-      padding: 6px 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      font-size: 12px;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus {
-      outline: none;
-      border-color: #002ea2;
-      box-shadow: 0 0 0 2px rgba(251, 122, 174, 0.2);
-    }
-
-    .checkbox-group {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .checkbox-group input[type="checkbox"] {
-      width: auto;
-    }
-
-    .checkbox-group label {
-      margin: 0;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .btn {
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      font-size: 12px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-
-    .btn-primary {
-      background: #002ea2;
-      color: white;
-    }
-
-    .btn-primary:hover {
-      background: #f56499;
-    }
-
-    .btn-secondary {
-      background: #0F79C6;
-      color: white;
-    }
-
-    .btn-secondary:hover {
-      background: #0d6ba8;
-    }
-
-    .btn-danger {
-      background: #e53e3e;
-      color: white;
-    }
-
-    .btn-danger:hover {
-      background: #c53030;
-    }
-
-    .status-indicator {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 6px;
-    }
-
-    .status-visible {
-      background-color: #48bb78;
-    }
-
-    .status-hidden {
-      background-color: #cbd5e0;
-    }
-
-    .preview-section {
-      background: #242D38;
-      border-radius: 8px;
-      padding: 16px;
-      color: white;
-      position: relative;
-      min-height: 100px;
-      overflow: hidden;
-    }
-
-    .preview-chyron {
-      position: absolute;
-      bottom: 16px;
-      left: 16px;
-      background: linear-gradient(90deg, #080A0C 0%, #242D38 100%);
-      border-left: 4px solid #002ea2;
-      border-radius: 0 8px 8px 0;
-      padding: 12px 16px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      transform: translateX(-100%);
-      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
-
-    .preview-chyron.visible {
-      transform: translateX(0);
-    }
-
-    .preview-name {
-      font-family: 'Lexend Mega', sans-serif;
-      font-weight: 700;
-      font-size: 16px;
-      color: #f7fafc;
-      margin-bottom: 4px;
-    }
-
-    .preview-title {
-      font-family: 'Lexend Mega', sans-serif;
-      font-weight: 500;
-      font-size: 12px;
-      color: #002ea2;
-      margin-bottom: 2px;
-    }
-
-    .preview-company {
-      font-family: 'Lexend Mega', sans-serif;
-      font-weight: 400;
-      font-size: 10px;
-      color: #637786;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="control-section">
-    <h3>Name Tag Chyron Status</h3>
-    <div class="form-group">
-      <label>Current Status</label>
-      <div>
-        <span id="status-indicator" class="status-indicator status-hidden"></span>
-        <span id="status-text">Hidden</span>
-      </div>
-    </div>
-
-    <div class="button-group">
-      <button id="show-btn" class="btn btn-primary">Show Chyron</button>
-      <button id="hide-btn" class="btn btn-secondary">Hide Chyron</button>
-      <button id="toggle-btn" class="btn btn-danger">Toggle</button>
-    </div>
-  </div>
-
-  <div class="control-section">
-    <h3>Content Settings</h3>
-
-    <div class="form-group">
-      <label for="name-input">Name</label>
-      <input type="text" id="name-input" placeholder="Enter name..." value="John Smith">
-      <div class="checkbox-group" style="margin-top:6px;">
-        <input type="checkbox" id="show-name-checkbox" checked>
-        <label for="show-name-checkbox">Show Name</label>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="title-input">Title/Position</label>
-      <input type="text" id="title-input" placeholder="Enter title..." value="Software Engineer">
-      <div class="checkbox-group" style="margin-top:6px;">
-        <input type="checkbox" id="show-title-checkbox" checked>
-        <label for="show-title-checkbox">Show Title</label>
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="company-input">Company/Organization</label>
-      <input type="text" id="company-input" placeholder="Enter company..." value="Tech Corporation">
-      <div class="checkbox-group" style="margin-top:6px;">
-        <input type="checkbox" id="show-company-checkbox" checked>
-        <label for="show-company-checkbox">Show Company</label>
-      </div>
-    </div>
-  </div>
-
-  <div class="control-section">
-    <h3>Animation Settings</h3>
-
-    <div class="form-group">
-      <label for="animation-select">Animation Type</label>
-      <select id="animation-select">
-        <option value="slide-in">Slide In</option>
-        <option value="fade-in">Fade In</option>
-        <option value="bounce-in">Bounce In</option>
-        <option value="typewriter">Typewriter Effect</option>
-        <option value="matrix-slide">Matrix Slide</option>
-        <option value="wave-effect">Wave Effect</option>
-        <option value="slide-up-fade">Slide Up Fade</option>
-        <option value="enhanced-pro" selected>Enhanced Pro</option>
-      </select>
-    </div>
-
-    <div class="form-group">
-      <label for="duration-input">Animation Duration (ms)</label>
-      <input type="number" id="duration-input" min="100" max="5000" step="100" value="600">
-    </div>
-  </div>
-
-
-
-  <div class="control-section">
-    <h3>Preview</h3>
-    <div class="preview-section">
-      <div id="preview-chyron" class="preview-chyron">
-        <div id="preview-name" class="preview-name">John Smith</div>
-        <div id="preview-title" class="preview-title">Software Engineer</div>
-        <div id="preview-company" class="preview-company">Tech Corporation</div>
-      </div>
-    </div>
-
-    <div class="button-group">
-      <button id="preview-show-btn" class="btn btn-secondary">Preview Show</button>
-      <button id="preview-hide-btn" class="btn btn-secondary">Preview Hide</button>
-    </div>
-  </div>
-
-  <script>
-    document.addEventListener( 'DOMContentLoaded', () => {
-      // Check if NodeCG is available
-      if ( typeof nodecg === 'undefined' ) {
-        console.warn( 'NodeCG not available. Running in standalone mode.' );
-        return;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Name Tag Chyron Controls</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 16px;
+        background: #f5f5f5;
       }
 
-      // NodeCG elements
-      const nameTagChyronReplicant = nodecg.Replicant( 'nameTagChyron' );
+      .control-section {
+        background: white;
+        border-radius: 8px;
+        padding: 16px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
 
-      // UI elements
-      const statusIndicator = document.getElementById( 'status-indicator' );
-      const statusText = document.getElementById( 'status-text' );
-      const showBtn = document.getElementById( 'show-btn' );
-      const hideBtn = document.getElementById( 'hide-btn' );
-      const toggleBtn = document.getElementById( 'toggle-btn' );
+      .control-section h3 {
+        margin: 0 0 12px 0;
+        color: #333;
+        font-size: 14px;
+        font-weight: 600;
+      }
 
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 12px;
+      }
 
+      .form-group label {
+        font-size: 12px;
+        color: #666;
+        margin-bottom: 4px;
+        font-weight: 500;
+      }
 
-      const nameInput = document.getElementById( 'name-input' );
-      const titleInput = document.getElementById( 'title-input' );
-      const companyInput = document.getElementById( 'company-input' );
-      const showNameCheckbox = document.getElementById( 'show-name-checkbox' );
-      const showTitleCheckbox = document.getElementById( 'show-title-checkbox' );
-      const showCompanyCheckbox = document.getElementById( 'show-company-checkbox' );
-      const animationSelect = document.getElementById( 'animation-select' );
-      const durationInput = document.getElementById( 'duration-input' );
+      .form-group input,
+      .form-group select {
+        padding: 6px 8px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 12px;
+      }
 
-      // Preview elements
-      const previewChyron = document.getElementById( 'preview-chyron' );
-      const previewName = document.getElementById( 'preview-name' );
-      const previewTitle = document.getElementById( 'preview-title' );
-      const previewCompany = document.getElementById( 'preview-company' );
-      const previewShowBtn = document.getElementById( 'preview-show-btn' );
-      const previewHideBtn = document.getElementById( 'preview-hide-btn' );
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #002ea2;
+        box-shadow: 0 0 0 2px rgba(251, 122, 174, 0.2);
+      }
 
-      // Default configuration
-      const defaultConfig = {
-        name: 'John Smith',
-        title: 'Software Engineer',
-        company: 'Tech Corporation',
-        visible: false,
-        showName: true,
-        showTitle: true,
-        showCompany: true,
-        animation: 'enhanced-pro',
-        duration: 600
-      };
+      .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
 
-      // Update UI from config
-      const updateUI = ( config ) => {
-        nameInput.value = config.name || '';
-        titleInput.value = config.title || '';
-        companyInput.value = config.company || '';
-        showNameCheckbox.checked = config.showName !== false;
-        showTitleCheckbox.checked = config.showTitle !== false;
-        showCompanyCheckbox.checked = config.showCompany !== false;
-        animationSelect.value = config.animation || 'slide-in';
-        durationInput.value = config.duration || 600;
+      .checkbox-group input[type='checkbox'] {
+        width: auto;
+      }
 
-        nameInput.disabled = !showNameCheckbox.checked;
-        titleInput.disabled = !showTitleCheckbox.checked;
-        companyInput.disabled = !showCompanyCheckbox.checked;
+      .checkbox-group label {
+        margin: 0;
+      }
 
-        // Update status
-        if ( config.visible ) {
-          statusIndicator.classList.remove( 'status-hidden' );
-          statusIndicator.classList.add( 'status-visible' );
-          statusText.textContent = 'Visible';
-        } else {
-          statusIndicator.classList.remove( 'status-visible' );
-          statusIndicator.classList.add( 'status-hidden' );
-          statusText.textContent = 'Hidden';
+      .button-group {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .btn {
+        padding: 8px 16px;
+        border: none;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
+
+      .btn-primary {
+        background: #002ea2;
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #f56499;
+      }
+
+      .btn-secondary {
+        background: #0f79c6;
+        color: white;
+      }
+
+      .btn-secondary:hover {
+        background: #0d6ba8;
+      }
+
+      .btn-danger {
+        background: #e53e3e;
+        color: white;
+      }
+
+      .btn-danger:hover {
+        background: #c53030;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        margin-right: 6px;
+      }
+
+      .status-visible {
+        background-color: #48bb78;
+      }
+
+      .status-hidden {
+        background-color: #cbd5e0;
+      }
+
+      .preview-section {
+        background: #242d38;
+        border-radius: 8px;
+        padding: 16px;
+        color: white;
+        position: relative;
+        min-height: 100px;
+        overflow: hidden;
+      }
+
+      .preview-chyron {
+        position: absolute;
+        bottom: 16px;
+        left: 16px;
+        background: linear-gradient(90deg, #080a0c 0%, #242d38 100%);
+        border-left: 4px solid #002ea2;
+        border-radius: 0 8px 8px 0;
+        padding: 12px 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        transform: translateX(-100%);
+        transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .preview-chyron.visible {
+        transform: translateX(0);
+      }
+
+      .preview-name {
+        font-family: 'Lexend Mega', sans-serif;
+        font-weight: 700;
+        font-size: 16px;
+        color: #f7fafc;
+        margin-bottom: 4px;
+      }
+
+      .preview-title {
+        font-family: 'Lexend Mega', sans-serif;
+        font-weight: 500;
+        font-size: 12px;
+        color: #002ea2;
+        margin-bottom: 2px;
+      }
+
+      .preview-company {
+        font-family: 'Lexend Mega', sans-serif;
+        font-weight: 400;
+        font-size: 10px;
+        color: #637786;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="control-section">
+      <h3>Name Tag Chyron Status</h3>
+      <div class="form-group">
+        <label>Current Status</label>
+        <div>
+          <span id="status-indicator" class="status-indicator status-hidden"></span>
+          <span id="status-text">Hidden</span>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button id="show-btn" class="btn btn-primary">Show Chyron</button>
+        <button id="hide-btn" class="btn btn-secondary">Hide Chyron</button>
+        <button id="toggle-btn" class="btn btn-danger">Toggle</button>
+      </div>
+    </div>
+
+    <div class="control-section">
+      <h3>Content Settings</h3>
+
+      <div class="form-group">
+        <label for="name-input">Name</label>
+        <input type="text" id="name-input" placeholder="Enter name..." value="John Smith" />
+        <div class="checkbox-group" style="margin-top: 6px">
+          <input type="checkbox" id="show-name-checkbox" checked />
+          <label for="show-name-checkbox">Show Name</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="title-input">Title/Position</label>
+        <input
+          type="text"
+          id="title-input"
+          placeholder="Enter title..."
+          value="Software Engineer"
+        />
+        <div class="checkbox-group" style="margin-top: 6px">
+          <input type="checkbox" id="show-title-checkbox" checked />
+          <label for="show-title-checkbox">Show Title</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="company-input">Company/Organization</label>
+        <input
+          type="text"
+          id="company-input"
+          placeholder="Enter company..."
+          value="Tech Corporation"
+        />
+        <div class="checkbox-group" style="margin-top: 6px">
+          <input type="checkbox" id="show-company-checkbox" checked />
+          <label for="show-company-checkbox">Show Company</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="control-section">
+      <h3>Animation Settings</h3>
+
+      <div class="form-group">
+        <label for="animation-select">Animation Type</label>
+        <select id="animation-select">
+          <option value="slide-in">Slide In</option>
+          <option value="fade-in">Fade In</option>
+          <option value="bounce-in">Bounce In</option>
+          <option value="typewriter">Typewriter Effect</option>
+          <option value="matrix-slide">Matrix Slide</option>
+          <option value="wave-effect">Wave Effect</option>
+          <option value="slide-up-fade">Slide Up Fade</option>
+          <option value="enhanced-pro" selected>Enhanced Pro</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="duration-input">Animation Duration (ms)</label>
+        <input type="number" id="duration-input" min="100" max="5000" step="100" value="600" />
+      </div>
+    </div>
+
+    <div class="control-section">
+      <h3>Preview</h3>
+      <div class="preview-section">
+        <div id="preview-chyron" class="preview-chyron">
+          <div id="preview-name" class="preview-name">John Smith</div>
+          <div id="preview-title" class="preview-title">Software Engineer</div>
+          <div id="preview-company" class="preview-company">Tech Corporation</div>
+        </div>
+      </div>
+
+      <div class="button-group">
+        <button id="preview-show-btn" class="btn btn-secondary">Preview Show</button>
+        <button id="preview-hide-btn" class="btn btn-secondary">Preview Hide</button>
+      </div>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        // Check if NodeCG is available
+        if (typeof nodecg === 'undefined') {
+          console.warn('NodeCG not available. Running in standalone mode.');
+          return;
         }
 
-        updatePreview( config );
-      };
+        // NodeCG elements
+        const nameTagChyronReplicant = nodecg.Replicant('nameTagChyron');
 
+        // UI elements
+        const statusIndicator = document.getElementById('status-indicator');
+        const statusText = document.getElementById('status-text');
+        const showBtn = document.getElementById('show-btn');
+        const hideBtn = document.getElementById('hide-btn');
+        const toggleBtn = document.getElementById('toggle-btn');
 
+        const nameInput = document.getElementById('name-input');
+        const titleInput = document.getElementById('title-input');
+        const companyInput = document.getElementById('company-input');
+        const showNameCheckbox = document.getElementById('show-name-checkbox');
+        const showTitleCheckbox = document.getElementById('show-title-checkbox');
+        const showCompanyCheckbox = document.getElementById('show-company-checkbox');
+        const animationSelect = document.getElementById('animation-select');
+        const durationInput = document.getElementById('duration-input');
 
-      // Update preview
-      const updatePreview = ( config ) => {
-        previewName.textContent = config.name || '';
-        previewTitle.textContent = config.title || '';
-        previewCompany.textContent = config.company || '';
-        previewName.style.display = config.showName === false ? 'none' : 'block';
-        previewTitle.style.display = config.showTitle === false ? 'none' : 'block';
-        previewCompany.style.display = ( config.showCompany === false ) ? 'none' : 'block';
-      };
+        // Preview elements
+        const previewChyron = document.getElementById('preview-chyron');
+        const previewName = document.getElementById('preview-name');
+        const previewTitle = document.getElementById('preview-title');
+        const previewCompany = document.getElementById('preview-company');
+        const previewShowBtn = document.getElementById('preview-show-btn');
+        const previewHideBtn = document.getElementById('preview-hide-btn');
 
-      // Update replicant
-      const updateReplicant = () => {
-        const currentVisible = nameTagChyronReplicant.value ? nameTagChyronReplicant.value.visible : false;
-        nameTagChyronReplicant.value = {
-          name: nameInput.value,
-          title: titleInput.value,
-          company: companyInput.value,
-          visible: currentVisible,
-          showName: showNameCheckbox.checked,
-          showTitle: showTitleCheckbox.checked,
-          showCompany: showCompanyCheckbox.checked,
-          animation: animationSelect.value,
-          duration: parseInt( durationInput.value )
+        // Default configuration
+        const defaultConfig = {
+          name: 'John Smith',
+          title: 'Software Engineer',
+          company: 'Tech Corporation',
+          visible: false,
+          showName: true,
+          showTitle: true,
+          showCompany: true,
+          animation: 'enhanced-pro',
+          duration: 600,
         };
-      };
 
+        // Update UI from config
+        const updateUI = (config) => {
+          nameInput.value = config.name || '';
+          titleInput.value = config.title || '';
+          companyInput.value = config.company || '';
+          showNameCheckbox.checked = config.showName !== false;
+          showTitleCheckbox.checked = config.showTitle !== false;
+          showCompanyCheckbox.checked = config.showCompany !== false;
+          animationSelect.value = config.animation || 'slide-in';
+          durationInput.value = config.duration || 600;
 
+          nameInput.disabled = !showNameCheckbox.checked;
+          titleInput.disabled = !showTitleCheckbox.checked;
+          companyInput.disabled = !showCompanyCheckbox.checked;
 
-      // Event listeners for buttons
-      showBtn.addEventListener( 'click', () => {
-        const currentConfig = nameTagChyronReplicant.value || defaultConfig;
-        nameTagChyronReplicant.value = { ...currentConfig, visible: true };
-      } );
+          // Update status
+          if (config.visible) {
+            statusIndicator.classList.remove('status-hidden');
+            statusIndicator.classList.add('status-visible');
+            statusText.textContent = 'Visible';
+          } else {
+            statusIndicator.classList.remove('status-visible');
+            statusIndicator.classList.add('status-hidden');
+            statusText.textContent = 'Hidden';
+          }
 
-      hideBtn.addEventListener( 'click', () => {
-        const currentConfig = nameTagChyronReplicant.value || defaultConfig;
-        nameTagChyronReplicant.value = { ...currentConfig, visible: false };
-      } );
+          updatePreview(config);
+        };
 
-      toggleBtn.addEventListener( 'click', () => {
-        const currentConfig = nameTagChyronReplicant.value || defaultConfig;
-        nameTagChyronReplicant.value = { ...currentConfig, visible: !currentConfig.visible };
-      } );
+        // Update preview
+        const updatePreview = (config) => {
+          previewName.textContent = config.name || '';
+          previewTitle.textContent = config.title || '';
+          previewCompany.textContent = config.company || '';
+          previewName.style.display = config.showName === false ? 'none' : 'block';
+          previewTitle.style.display = config.showTitle === false ? 'none' : 'block';
+          previewCompany.style.display = config.showCompany === false ? 'none' : 'block';
+        };
 
-
-
-      // Event listeners for inputs
-      nameInput.addEventListener( 'input', updateReplicant );
-      titleInput.addEventListener( 'input', updateReplicant );
-      companyInput.addEventListener( 'input', updateReplicant );
-      showNameCheckbox.addEventListener( 'change', () => {
-        nameInput.disabled = !showNameCheckbox.checked;
-        updateReplicant();
-      } );
-      showTitleCheckbox.addEventListener( 'change', () => {
-        titleInput.disabled = !showTitleCheckbox.checked;
-        updateReplicant();
-      } );
-      showCompanyCheckbox.addEventListener( 'change', () => {
-        companyInput.disabled = !showCompanyCheckbox.checked;
-        updateReplicant();
-      } );
-      animationSelect.addEventListener( 'change', updateReplicant );
-      durationInput.addEventListener( 'input', updateReplicant );
-
-      // Preview controls
-      previewShowBtn.addEventListener( 'click', () => {
-        previewChyron.classList.add( 'visible' );
-      } );
-
-      previewHideBtn.addEventListener( 'click', () => {
-        previewChyron.classList.remove( 'visible' );
-      } );
-
-      // Listen for replicant changes
-      nameTagChyronReplicant.on( 'change', ( newVal ) => {
-        if ( newVal ) {
-          updateUI( newVal );
-        }
-      } );
-
-      // Initialize with default values if no replicant exists
-      setTimeout( () => {
-        if ( !nameTagChyronReplicant.value ) {
-          nameTagChyronReplicant.value = defaultConfig;
-        }
-      }, 100 );
-
-      // Update preview when inputs change
-      const inputs = [ nameInput, titleInput, companyInput, showNameCheckbox, showTitleCheckbox, showCompanyCheckbox ];
-      inputs.forEach( input => {
-        input.addEventListener( 'input', () => {
-          updatePreview( {
+        // Update replicant
+        const updateReplicant = () => {
+          const currentVisible = nameTagChyronReplicant.value
+            ? nameTagChyronReplicant.value.visible
+            : false;
+          nameTagChyronReplicant.value = {
             name: nameInput.value,
             title: titleInput.value,
             company: companyInput.value,
+            visible: currentVisible,
             showName: showNameCheckbox.checked,
             showTitle: showTitleCheckbox.checked,
-            showCompany: showCompanyCheckbox.checked
-          } );
-        } );
-        input.addEventListener( 'change', () => {
-          updatePreview( {
-            name: nameInput.value,
-            title: titleInput.value,
-            company: companyInput.value,
-            showName: showNameCheckbox.checked,
-            showTitle: showTitleCheckbox.checked,
-            showCompany: showCompanyCheckbox.checked
-          } );
-        } );
-      } );
-    } );
-  </script>
-</body>
+            showCompany: showCompanyCheckbox.checked,
+            animation: animationSelect.value,
+            duration: parseInt(durationInput.value),
+          };
+        };
 
+        // Event listeners for buttons
+        showBtn.addEventListener('click', () => {
+          const currentConfig = nameTagChyronReplicant.value || defaultConfig;
+          nameTagChyronReplicant.value = { ...currentConfig, visible: true };
+        });
+
+        hideBtn.addEventListener('click', () => {
+          const currentConfig = nameTagChyronReplicant.value || defaultConfig;
+          nameTagChyronReplicant.value = { ...currentConfig, visible: false };
+        });
+
+        toggleBtn.addEventListener('click', () => {
+          const currentConfig = nameTagChyronReplicant.value || defaultConfig;
+          nameTagChyronReplicant.value = { ...currentConfig, visible: !currentConfig.visible };
+        });
+
+        // Event listeners for inputs
+        nameInput.addEventListener('input', updateReplicant);
+        titleInput.addEventListener('input', updateReplicant);
+        companyInput.addEventListener('input', updateReplicant);
+        showNameCheckbox.addEventListener('change', () => {
+          nameInput.disabled = !showNameCheckbox.checked;
+          updateReplicant();
+        });
+        showTitleCheckbox.addEventListener('change', () => {
+          titleInput.disabled = !showTitleCheckbox.checked;
+          updateReplicant();
+        });
+        showCompanyCheckbox.addEventListener('change', () => {
+          companyInput.disabled = !showCompanyCheckbox.checked;
+          updateReplicant();
+        });
+        animationSelect.addEventListener('change', updateReplicant);
+        durationInput.addEventListener('input', updateReplicant);
+
+        // Preview controls
+        previewShowBtn.addEventListener('click', () => {
+          previewChyron.classList.add('visible');
+        });
+
+        previewHideBtn.addEventListener('click', () => {
+          previewChyron.classList.remove('visible');
+        });
+
+        // Listen for replicant changes
+        nameTagChyronReplicant.on('change', (newVal) => {
+          if (newVal) {
+            updateUI(newVal);
+          }
+        });
+
+        // Initialize with default values if no replicant exists
+        setTimeout(() => {
+          if (!nameTagChyronReplicant.value) {
+            nameTagChyronReplicant.value = defaultConfig;
+          }
+        }, 100);
+
+        // Update preview when inputs change
+        const inputs = [
+          nameInput,
+          titleInput,
+          companyInput,
+          showNameCheckbox,
+          showTitleCheckbox,
+          showCompanyCheckbox,
+        ];
+        inputs.forEach((input) => {
+          input.addEventListener('input', () => {
+            updatePreview({
+              name: nameInput.value,
+              title: titleInput.value,
+              company: companyInput.value,
+              showName: showNameCheckbox.checked,
+              showTitle: showTitleCheckbox.checked,
+              showCompany: showCompanyCheckbox.checked,
+            });
+          });
+          input.addEventListener('change', () => {
+            updatePreview({
+              name: nameInput.value,
+              title: titleInput.value,
+              company: companyInput.value,
+              showName: showNameCheckbox.checked,
+              showTitle: showTitleCheckbox.checked,
+              showCompany: showCompanyCheckbox.checked,
+            });
+          });
+        });
+      });
+    </script>
+  </body>
 </html>

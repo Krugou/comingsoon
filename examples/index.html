@@ -1,953 +1,962 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Example Site - Coming Soon</title>
-  <meta name="description" content="Example Site - Coming Soon 2025">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            // Generic color scheme
-            primaryDark: '#242D38',
-            secondaryBlue: '#0F79C6',
-            darkBg: '#080A0C',
-            lightText: '#f7fafc',
-            accentPink: '#002ea2',
-            grayText: '#637786',
-          }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Example Site - Coming Soon</title>
+    <meta name="description" content="Example Site - Coming Soon 2025" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              // Generic color scheme
+              primaryDark: '#242D38',
+              secondaryBlue: '#0F79C6',
+              darkBg: '#080A0C',
+              lightText: '#f7fafc',
+              accentPink: '#002ea2',
+              grayText: '#637786',
+            },
+          },
+          fontFamily: {
+            sans: ['Lexend Mega', 'sans-serif'],
+          },
         },
-        fontFamily: {
-          sans: [ 'Lexend Mega', 'sans-serif' ]
+        darkMode: 'class',
+      };
+    </script>
+
+    <!-- Add Lexend Mega font from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@100..900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Use Three.js with TextGeometry support -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
+
+    <!-- Text geometry helper script -->
+    <script>
+      /**
+       * Create text using TextGeometry with proper error handling and fallback
+       * @param {THREE.Scene} scene - The Three.js scene to add the text to
+       * @param {string} text - The text string to render
+       * @param {number} color - The color of the text in hex format
+       * @param {number} size - The base size of the text
+       * @param {number} yPos - The vertical position of the text
+       * @returns {Promise<{group: THREE.Group, meshes: THREE.Mesh[], individualLetters: boolean}>} - Promise resolving to text objects
+       */
+      const createTextGeometry = async (scene, text, color, size, yPos) => {
+        // Create promise-based font loader
+        const loadFont = () => {
+          return new Promise((resolve, reject) => {
+            const fontLoader = new THREE.FontLoader();
+            fontLoader.load(
+              'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/gentilis_bold.typeface.json',
+              (font) => resolve(font),
+              undefined,
+              (error) => reject(new Error(`Font loading error: ${error}`))
+            );
+          });
+        };
+
+        try {
+          const font = await loadFont();
+          const group = new THREE.Group();
+          const letterGroups = [];
+          const letterMeshes = [];
+
+          // Material with emissive properties for better visibility
+          const material = new THREE.MeshStandardMaterial({
+            color: color,
+            metalness: 0.3,
+            roughness: 0.7,
+            emissive: color,
+            emissiveIntensity: 0.2,
+            flatShading: true,
+          });
+
+          // Create individual letters for better explosion effect
+          let totalWidth = 0;
+          const letterGeometries = [];
+          const letterSizes = [];
+
+          // First pass: calculate letter sizes and total width
+          for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+
+            if (char === ' ') {
+              letterGeometries.push(null);
+              letterSizes.push(size * 0.6); // space width
+              totalWidth += size * 0.6;
+              continue;
+            }
+
+            const letterGeometry = new THREE.TextGeometry(char, {
+              font: font,
+              size: size,
+              height: size * 0.2,
+              curveSegments: 5,
+              bevelEnabled: true,
+              bevelThickness: size * 0.03,
+              bevelSize: size * 0.01,
+              bevelOffset: 0,
+              bevelSegments: 3,
+            });
+
+            letterGeometry.computeBoundingBox();
+            const letterWidth = letterGeometry.boundingBox.max.x - letterGeometry.boundingBox.min.x;
+            letterSizes.push(letterWidth + size * 0.1); // Add a small gap
+            totalWidth += letterWidth + size * 0.1;
+            letterGeometries.push(letterGeometry);
+          }
+
+          // Second pass: position and create meshes
+          let currentX = -totalWidth / 2;
+          for (let i = 0; i < text.length; i++) {
+            if (text[i] === ' ') {
+              currentX += letterSizes[i];
+              continue;
+            }
+
+            const letterGeometry = letterGeometries[i];
+            const letterMesh = new THREE.Mesh(letterGeometry, material.clone());
+            const letterGroup = new THREE.Group();
+
+            letterMesh.position.set(0, 0, 0);
+            letterGroup.position.set(currentX, yPos, 0);
+            letterGroup.add(letterMesh);
+            group.add(letterGroup);
+
+            // Store data for animation
+            letterGroup.userData = {
+              isLetter: true,
+              originalPosition: { x: currentX, y: yPos, z: 0 },
+              originalRotation: { x: 0, y: 0, z: 0 },
+            };
+
+            letterGroups.push(letterGroup);
+            letterMeshes.push(letterMesh);
+            currentX += letterSizes[i];
+          }
+
+          scene.add(group);
+          return { group, meshes: letterGroups, individualLetters: true };
+        } catch (error) {
+          console.error('Error creating text geometry:', error);
+
+          // Fallback to cube text if TextGeometry fails
+          console.warn('Falling back to cube-based text');
+          return createCubeTextFallback(scene, text, color, size, yPos);
         }
-      },
-      darkMode: 'class'
-    }
-  </script>
-
-  <!-- Add Lexend Mega font from Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lexend+Mega:wght@100..900&display=swap" rel="stylesheet">
-
-  <!-- Use Three.js with TextGeometry support -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/FontLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/geometries/TextGeometry.js"></script>
-
-  <!-- Text geometry helper script -->
-  <script>
-    /**
-     * Create text using TextGeometry with proper error handling and fallback
-     * @param {THREE.Scene} scene - The Three.js scene to add the text to
-     * @param {string} text - The text string to render
-     * @param {number} color - The color of the text in hex format
-     * @param {number} size - The base size of the text
-     * @param {number} yPos - The vertical position of the text
-     * @returns {Promise<{group: THREE.Group, meshes: THREE.Mesh[], individualLetters: boolean}>} - Promise resolving to text objects
-     */
-    const createTextGeometry = async ( scene, text, color, size, yPos ) => {
-      // Create promise-based font loader
-      const loadFont = () => {
-        return new Promise( ( resolve, reject ) => {
-          const fontLoader = new THREE.FontLoader();
-          fontLoader.load(
-            'https://cdn.jsdelivr.net/npm/three@0.128.0/examples/fonts/gentilis_bold.typeface.json',
-            font => resolve( font ),
-            undefined,
-            error => reject( new Error( `Font loading error: ${ error }` ) )
-          );
-        } );
       };
 
-      try {
-        const font = await loadFont();
+      /**
+       * Fallback method that creates text using cubes when TextGeometry fails
+       * @param {THREE.Scene} scene - The Three.js scene
+       * @param {string} text - The text to render
+       * @param {number} color - The color in hex format
+       * @param {number} size - The size of the text
+       * @param {number} yPos - The vertical position
+       * @returns {{group: THREE.Group, meshes: THREE.Mesh[]}} - Text objects
+       */
+      const createCubeTextFallback = (scene, text, color, size, yPos) => {
         const group = new THREE.Group();
-        const letterGroups = [];
-        const letterMeshes = [];
-
-        // Material with emissive properties for better visibility
-        const material = new THREE.MeshStandardMaterial( {
+        const material = new THREE.MeshStandardMaterial({
           color: color,
           metalness: 0.3,
           roughness: 0.7,
           emissive: color,
           emissiveIntensity: 0.2,
-          flatShading: true
-        } );
+        });
 
-        // Create individual letters for better explosion effect
-        let totalWidth = 0;
-        const letterGeometries = [];
-        const letterSizes = [];
+        // Get width of text in characters
+        const width = text.replace(/\s/g, '').length;
+        const spacing = size * 1.2;
+        const totalWidth = width * spacing;
 
-        // First pass: calculate letter sizes and total width
-        for ( let i = 0; i < text.length; i++ ) {
-          const char = text[ i ];
+        let xPos = -totalWidth / 2 + spacing / 2;
+        const meshes = [];
 
-          if ( char === ' ' ) {
-            letterGeometries.push( null );
-            letterSizes.push( size * 0.6 ); // space width
-            totalWidth += size * 0.6;
+        for (let i = 0; i < text.length; i++) {
+          const char = text[i];
+
+          if (char === ' ') {
+            xPos += spacing;
             continue;
           }
 
-          const letterGeometry = new THREE.TextGeometry( char, {
-            font: font,
-            size: size,
-            height: size * 0.2,
-            curveSegments: 5,
-            bevelEnabled: true,
-            bevelThickness: size * 0.03,
-            bevelSize: size * 0.01,
-            bevelOffset: 0,
-            bevelSegments: 3
-          } );
+          const cube = new THREE.Mesh(
+            new THREE.BoxGeometry(size, size, size * 0.5),
+            material.clone()
+          );
 
-          letterGeometry.computeBoundingBox();
-          const letterWidth = letterGeometry.boundingBox.max.x - letterGeometry.boundingBox.min.x;
-          letterSizes.push( letterWidth + size * 0.1 ); // Add a small gap
-          totalWidth += letterWidth + size * 0.1;
-          letterGeometries.push( letterGeometry );
-        }
-
-        // Second pass: position and create meshes
-        let currentX = -totalWidth / 2;
-        for ( let i = 0; i < text.length; i++ ) {
-          if ( text[ i ] === ' ' ) {
-            currentX += letterSizes[ i ];
-            continue;
-          }
-
-          const letterGeometry = letterGeometries[ i ];
-          const letterMesh = new THREE.Mesh( letterGeometry, material.clone() );
-          const letterGroup = new THREE.Group();
-
-          letterMesh.position.set( 0, 0, 0 );
-          letterGroup.position.set( currentX, yPos, 0 );
-          letterGroup.add( letterMesh );
-          group.add( letterGroup );
-
-          // Store data for animation
-          letterGroup.userData = {
+          cube.position.set(xPos, yPos, 0);
+          cube.userData = {
             isLetter: true,
-            originalPosition: { x: currentX, y: yPos, z: 0 },
-            originalRotation: { x: 0, y: 0, z: 0 }
+            originalPosition: { x: xPos, y: yPos, z: 0 },
+            originalRotation: { x: 0, y: 0, z: 0 },
           };
 
-          letterGroups.push( letterGroup );
-          letterMeshes.push( letterMesh );
-          currentX += letterSizes[ i ];
-        }
-
-        scene.add( group );
-        return { group, meshes: letterGroups, individualLetters: true };
-      } catch ( error ) {
-        console.error( "Error creating text geometry:", error );
-
-        // Fallback to cube text if TextGeometry fails
-        console.warn( "Falling back to cube-based text" );
-        return createCubeTextFallback( scene, text, color, size, yPos );
-      }
-    };
-
-    /**
-     * Fallback method that creates text using cubes when TextGeometry fails
-     * @param {THREE.Scene} scene - The Three.js scene
-     * @param {string} text - The text to render
-     * @param {number} color - The color in hex format
-     * @param {number} size - The size of the text
-     * @param {number} yPos - The vertical position
-     * @returns {{group: THREE.Group, meshes: THREE.Mesh[]}} - Text objects
-     */
-    const createCubeTextFallback = ( scene, text, color, size, yPos ) => {
-      const group = new THREE.Group();
-      const material = new THREE.MeshStandardMaterial( {
-        color: color,
-        metalness: 0.3,
-        roughness: 0.7,
-        emissive: color,
-        emissiveIntensity: 0.2
-      } );
-
-      // Get width of text in characters
-      const width = text.replace( /\s/g, '' ).length;
-      const spacing = size * 1.2;
-      const totalWidth = width * spacing;
-
-      let xPos = -totalWidth / 2 + spacing / 2;
-      const meshes = [];
-
-      for ( let i = 0; i < text.length; i++ ) {
-        const char = text[ i ];
-
-        if ( char === ' ' ) {
+          group.add(cube);
+          meshes.push(cube);
           xPos += spacing;
-          continue;
         }
 
-        const cube = new THREE.Mesh(
-          new THREE.BoxGeometry( size, size, size * 0.5 ),
-          material.clone()
-        );
+        scene.add(group);
+        return { group, meshes };
+      };
+    </script>
 
-        cube.position.set( xPos, yPos, 0 );
-        cube.userData = {
-          isLetter: true,
-          originalPosition: { x: xPos, y: yPos, z: 0 },
-          originalRotation: { x: 0, y: 0, z: 0 }
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #242d38;
+        font-family: 'Lexend Mega', sans-serif;
+      }
+
+      #scene-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      /* Fallback if 3D doesn't work */
+      #fallback-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        font-family: 'Lexend Mega', sans-serif;
+        text-align: center;
+        z-index: -1;
+      }
+
+      #fallback-container h1 {
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #002ea2;
+      }
+
+      #fallback-container p {
+        font-size: 1.5rem;
+        color: #f7fafc;
+        font-weight: 500;
+      }
+
+      /* Loading indicator */
+      #loading-indicator {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #f7fafc;
+        font-family: 'Lexend Mega', sans-serif;
+        font-size: 1.5rem;
+        text-align: center;
+        z-index: 10;
+        font-weight: 400;
+      }
+
+      .spinner {
+        margin: 20px auto;
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(251, 122, 174, 0.3);
+        border-radius: 50%;
+        border-top-color: #002ea2;
+        animation: spin 1s ease-in-out infinite;
+      }
+
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="scene-container"></div>
+
+    <!-- Loading indicator -->
+    <div id="loading-indicator">
+      <div>Loading...</div>
+      <div class="spinner"></div>
+    </div>
+
+    <!-- Fallback div in case 3D rendering fails -->
+    <div id="fallback-container">
+      <h1 id="fallback-title">EXAMPLE SITE</h1>
+      <p id="fallback-subtitle">COMING SOON 2025</p>
+      <p id="fallback-attribution" class="mt-8 text-sm text-grayText">EXAMPLE COMPANY</p>
+    </div>
+
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        // Basic variable setup
+        const container = document.getElementById('scene-container');
+        const fallback = document.getElementById('fallback-container');
+        const loadingIndicator = document.getElementById('loading-indicator');
+        let scene, camera, renderer;
+        let textGroups = [];
+        let textMeshes = [];
+        let particles;
+        let animationId;
+        const clock = new THREE.Clock();
+
+        // Default text configuration - will be used if no URL parameters are provided
+        const defaultConfig = {
+          title: {
+            text: 'EXAMPLE SITE',
+            color: 0x002ea2, // accentPink
+            size: 1.2,
+            yPos: 3,
+          },
+          subtitle: {
+            text: 'COMING SOON 2025',
+            color: 0xf7fafc, // lightText
+            size: 0.8,
+            yPos: -2,
+          },
+          attribution: {
+            text: 'Example Company & Partner Organization',
+            color: 0x637786, // grayText
+            size: 0.4,
+            yPos: -5.5,
+          },
+          background: {
+            color: 0x242d38, // primaryDark
+            particleCount: 1000,
+            particleColor: 0xf7fafc, // lightText
+            particleSize: 0.1,
+            particleOpacity: 0.6,
+          },
+          animation: {
+            explosionDuration: 6000,
+            explosionStrength: 15,
+            rotationStrength: 3,
+          },
         };
 
-        group.add( cube );
-        meshes.push( cube );
-        xPos += spacing;
-      }
-
-      scene.add( group );
-      return { group, meshes };
-    };
-  </script>
-
-  <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-      background-color: #242D38;
-      font-family: 'Lexend Mega', sans-serif;
-    }
-
-    #scene-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    /* Fallback if 3D doesn't work */
-    #fallback-container {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-family: 'Lexend Mega', sans-serif;
-      text-align: center;
-      z-index: -1;
-    }
-
-    #fallback-container h1 {
-      font-size: 3rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      color: #002ea2;
-    }
-
-    #fallback-container p {
-      font-size: 1.5rem;
-      color: #f7fafc;
-      font-weight: 500;
-    }
-
-    /* Loading indicator */
-    #loading-indicator {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: #f7fafc;
-      font-family: 'Lexend Mega', sans-serif;
-      font-size: 1.5rem;
-      text-align: center;
-      z-index: 10;
-      font-weight: 400;
-    }
-
-    .spinner {
-      margin: 20px auto;
-      width: 50px;
-      height: 50px;
-      border: 3px solid rgba(251, 122, 174, 0.3);
-      border-radius: 50%;
-      border-top-color: #002ea2;
-      animation: spin 1s ease-in-out infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-  </style>
-</head>
-
-<body>
-  <div id="scene-container"></div>
-
-  <!-- Loading indicator -->
-  <div id="loading-indicator">
-    <div>Loading...</div>
-    <div class="spinner"></div>
-  </div>
-
-  <!-- Fallback div in case 3D rendering fails -->
-  <div id="fallback-container">
-    <h1 id="fallback-title">EXAMPLE SITE</h1>
-    <p id="fallback-subtitle">COMING SOON 2025</p>
-    <p id="fallback-attribution" class="mt-8 text-sm text-grayText">EXAMPLE COMPANY</p>
-  </div>
-
-  <script>
-    document.addEventListener( 'DOMContentLoaded', async () => {
-      // Basic variable setup
-      const container = document.getElementById( 'scene-container' );
-      const fallback = document.getElementById( 'fallback-container' );
-      const loadingIndicator = document.getElementById( 'loading-indicator' );
-      let scene, camera, renderer;
-      let textGroups = [];
-      let textMeshes = [];
-      let particles;
-      let animationId;
-      const clock = new THREE.Clock();
-
-      // Default text configuration - will be used if no URL parameters are provided
-      const defaultConfig = {
-        title: {
-          text: "EXAMPLE SITE",
-          color: 0x002ea2, // accentPink
-          size: 1.2,
-          yPos: 3
-        },
-        subtitle: {
-          text: "COMING SOON 2025",
-          color: 0xf7fafc, // lightText
-          size: 0.8,
-          yPos: -2
-        },
-        attribution: {
-          text: "Example Company & Partner Organization",
-          color: 0x637786, // grayText
-          size: 0.4,
-          yPos: -5.5
-        },
-        background: {
-          color: 0x242D38, // primaryDark
-          particleCount: 1000,
-          particleColor: 0xf7fafc, // lightText
-          particleSize: 0.1,
-          particleOpacity: 0.6
-        },
-        animation: {
-          explosionDuration: 6000,
-          explosionStrength: 15,
-          rotationStrength: 3
-        }
-      };
-
-      // Parse URL parameters to customize all text and animation properties
-      const getCustomConfig = () => {
-        const params = new URLSearchParams( window.location.search );
-
-        // Create a deep copy of the default config
-        const config = JSON.parse( JSON.stringify( defaultConfig ) );
-
-        // Helper function to safely parse hex colors
-        const parseColor = ( colorStr ) => {
-          if ( !colorStr ) return null;
-          // Remove # if present and ensure it's a valid hex color
-          colorStr = colorStr.replace( /^#/, '' );
-          if ( /^[0-9A-F]{6}$/i.test( colorStr ) ) {
-            return parseInt( colorStr, 16 );
-          }
-          return null;
-        };
-
-        // Helper function to safely parse numbers
-        const parseNumber = ( numStr, defaultValue ) => {
-          if ( !numStr ) return defaultValue;
-          const parsed = parseFloat( numStr );
-          return isNaN( parsed ) ? defaultValue : parsed;
-        };
-
-        // Process text parameters for each text element
-        [ 'title', 'subtitle', 'attribution' ].forEach( textElement => {
-          // Update text content if provided
-          if ( params.has( textElement ) ) {
-            config[ textElement ].text = params.get( textElement ).substring( 0,
-              textElement === 'attribution' ? 100 : 50 ); // Limit length for safety
-          }
-
-          // Update color if provided
-          const colorParam = params.get( `${ textElement }Color` );
-          const parsedColor = parseColor( colorParam );
-          if ( parsedColor !== null ) config[ textElement ].color = parsedColor;
-
-          // Update size if provided
-          config[ textElement ].size = parseNumber(
-            params.get( `${ textElement }Size` ),
-            config[ textElement ].size
-          );
-
-          // Update position if provided
-          config[ textElement ].yPos = parseNumber(
-            params.get( `${ textElement }Y` ),
-            config[ textElement ].yPos
-          );
-        } );
-
-        // Process background parameters
-        const bgColor = parseColor( params.get( 'bgColor' ) );
-        if ( bgColor !== null ) config.background.color = bgColor;
-
-        // Process particle parameters
-        config.background.particleCount = parseNumber(
-          params.get( 'particleCount' ),
-          config.background.particleCount
-        );
-
-        const particleColor = parseColor( params.get( 'particleColor' ) );
-        if ( particleColor !== null ) config.background.particleColor = particleColor;
-
-        config.background.particleSize = parseNumber(
-          params.get( 'particleSize' ),
-          config.background.particleSize
-        );
-
-        config.background.particleOpacity = parseNumber(
-          params.get( 'particleOpacity' ),
-          config.background.particleOpacity
-        );
-
-        // Process animation parameters
-        config.animation.explosionDuration = parseNumber(
-          params.get( 'explosionDuration' ),
-          config.animation.explosionDuration
-        );
-
-        config.animation.explosionStrength = parseNumber(
-          params.get( 'explosionStrength' ),
-          config.animation.explosionStrength
-        );
-
-        config.animation.rotationStrength = parseNumber(
-          params.get( 'rotationStrength' ),
-          config.animation.rotationStrength
-        );
-
-        return config;
-      };
-
-      // Get custom configuration from URL parameters
-      const textConfig = getCustomConfig();
-
-      // Update document title based on text configuration
-      document.title = `${ textConfig.title.text } - ${ textConfig.subtitle.text }`;
-
-      // Update meta description
-      const metaDescription = document.querySelector( 'meta[name="description"]' );
-      if ( metaDescription ) {
-        metaDescription.setAttribute( 'content', `${ textConfig.title.text } - ${ textConfig.subtitle.text }` );
-      }
-
-      // Update the fallback content based on the configuration
-      document.getElementById( 'fallback-title' ).textContent = textConfig.title.text;
-      document.getElementById( 'fallback-subtitle' ).textContent = textConfig.subtitle.text;
-      document.getElementById( 'fallback-attribution' ).textContent = textConfig.attribution.text;
-
-      // Update fallback styles to match custom colors
-      const fallbackTitle = document.getElementById( 'fallback-title' );
-      fallbackTitle.style.color = '#' + textConfig.title.color.toString( 16 ).padStart( 6, '0' );
-
-      const fallbackSubtitle = document.getElementById( 'fallback-subtitle' );
-      fallbackSubtitle.style.color = '#' + textConfig.subtitle.color.toString( 16 ).padStart( 6, '0' );
-
-      const fallbackAttribution = document.getElementById( 'fallback-attribution' );
-      fallbackAttribution.style.color = '#' + textConfig.attribution.color.toString( 16 ).padStart( 6, '0' );
-
-      // Update body background color
-      document.body.style.backgroundColor = '#' + textConfig.background.color.toString( 16 ).padStart( 6, '0' );
-
-      // Error handling class
-      class SceneError extends Error {
-        constructor ( message ) {
-          super( message );
-          this.name = 'SceneError';
-        }
-      }
-
-      // Explosion animation state
-      const animState = {
-        exploding: false,
-        startTime: 0,
-        duration: textConfig.animation.explosionDuration,
-        meshes: [],
-        originalPositions: [],
-        originalRotations: []
-      };
-
-      /**
-       * Initialize the 3D scene with error handling
-       * @returns {Promise<boolean>} - Success status
-       */
-      const init = async () => {
-        try {
-          // Create scene
-          scene = new THREE.Scene();
-          scene.background = new THREE.Color( textConfig.background.color );
-
-          // Create camera
-          camera = new THREE.PerspectiveCamera(
-            75,
-            window.innerWidth / window.innerHeight,
-            0.1,
-            1000
-          );
-          camera.position.z = 20;
-
-          // Create renderer with error handling
-          try {
-            renderer = new THREE.WebGLRenderer( {
-              antialias: true,
-              powerPreference: 'high-performance'
-            } );
-
-            if ( !renderer ) throw new SceneError( 'WebGL renderer creation failed' );
-
-            renderer.setSize( window.innerWidth, window.innerHeight );
-            renderer.setPixelRatio( Math.min( window.devicePixelRatio, 2 ) );
-
-            // Add renderer to DOM
-            container.appendChild( renderer.domElement );
-          } catch ( error ) {
-            console.error( 'Renderer creation failed:', error );
-            throw new SceneError( 'WebGL not supported or renderer creation failed' );
-          }
-
-          // Add lights
-          const ambientLight = new THREE.AmbientLight( 0xffffff, 0.7 );
-          scene.add( ambientLight );
-
-          const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-          directionalLight.position.set( 1, 1, 1 );
-          scene.add( directionalLight );
-
-          // Add accent light for better text visibility
-          const accentLight = new THREE.PointLight( 0x002ea2, 0.8 ); // accentPink
-          accentLight.position.set( 0, 0, 10 );
-          scene.add( accentLight );
-
-          // Create particle background with custom settings
-          createParticles();
-
-          // Create text with TextGeometry
-          await createText();
-
-          // Hide loading indicator
-          loadingIndicator.style.display = "none";
-
-          // Event listeners
-          window.addEventListener( 'resize', handleResize );
-          renderer.domElement.addEventListener( 'click', handleClick );
-          renderer.domElement.addEventListener( 'touchstart', handleClick );
-          // Add keyboard event listener to trigger explosion
-          window.addEventListener( 'keydown', handleKeydown );
-
-          // Start animation loop
-          animate( 0 );
-
-          return true;
-        } catch ( error ) {
-          console.error( "Error initializing scene:", error );
-          showFallback();
-          return false;
-        }
-      };
-
-      /**
-       * Create text using TextGeometry
-       * @returns {Promise<void>}
-       */
-      const createText = async () => {
-        try {
-          // Create title using custom config
-          const title = await createTextGeometry(
-            scene,
-            textConfig.title.text,
-            textConfig.title.color,
-            textConfig.title.size,
-            textConfig.title.yPos
-          );
-          textGroups.push( title.group );
-          if ( title.textMesh ) textMeshes.push( title.textMesh );
-
-          // Create subtitle using custom config
-          const subtitle = await createTextGeometry(
-            scene,
-            textConfig.subtitle.text,
-            textConfig.subtitle.color,
-            textConfig.subtitle.size,
-            textConfig.subtitle.yPos
-          );
-          textGroups.push( subtitle.group );
-          if ( subtitle.textMesh ) textMeshes.push( subtitle.textMesh );
-
-          // Create attribution text using custom config
-          const attribution = await createTextGeometry(
-            scene,
-            textConfig.attribution.text,
-            textConfig.attribution.color,
-            textConfig.attribution.size,
-            textConfig.attribution.yPos
-          );
-          textGroups.push( attribution.group );
-          if ( attribution.textMesh ) textMeshes.push( attribution.textMesh );
-
-          // Add all meshes to the animation state
-          animState.meshes = [
-            ...title.meshes,
-            ...subtitle.meshes,
-            ...attribution.meshes
-          ];
-
-          // Save original positions for explosion animation
-          saveOriginalPositions();
-        } catch ( error ) {
-          console.error( "Error creating text:", error );
-          throw new SceneError( "Text creation failed" );
-        }
-      };
-
-      /**
-       * Create particle background with custom settings
-       */
-      const createParticles = () => {
-        const particleCount = textConfig.background.particleCount;
-        const positions = new Float32Array( particleCount * 3 );
-
-        for ( let i = 0; i < particleCount; i++ ) {
-          positions[ i * 3 ] = ( Math.random() - 0.5 ) * 100;
-          positions[ i * 3 + 1 ] = ( Math.random() - 0.5 ) * 100;
-          positions[ i * 3 + 2 ] = ( Math.random() - 0.5 ) * 100;
-        }
-
-        const geometry = new THREE.BufferGeometry();
-        geometry.setAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-
-        const material = new THREE.PointsMaterial( {
-          color: textConfig.background.particleColor,
-          size: textConfig.background.particleSize,
-          transparent: true,
-          opacity: textConfig.background.particleOpacity
-        } );
-
-        particles = new THREE.Points( geometry, material );
-        scene.add( particles );
-      };
-
-      /**
-       * Show fallback text and hide loading indicator
-       */
-      const showFallback = () => {
-        fallback.style.zIndex = "1";
-        loadingIndicator.style.display = "none";
-      };
-
-      /**
-       * Save original positions for restoring after explosion
-       */
-      const saveOriginalPositions = () => {
-        animState.originalPositions = [];
-        animState.originalRotations = [];
-
-        animState.meshes.forEach( mesh => {
-          if ( mesh.userData && mesh.userData.isLetter ) {
-            animState.originalPositions.push( {
-              object: mesh,
-              position: new THREE.Vector3(
-                mesh.position.x,
-                mesh.position.y,
-                mesh.position.z
-              )
-            } );
-
-            animState.originalRotations.push( {
-              object: mesh,
-              rotation: {
-                x: mesh.rotation.x,
-                y: mesh.rotation.y,
-                z: mesh.rotation.z
-              }
-            } );
-          }
-        } );
-      };
-
-      /**
-       * Handle key press to explode text
-       * @param {KeyboardEvent} event - Keyboard event
-       */
-      const handleKeydown = ( event ) => {
-        // Don't prevent default for all keys to allow normal browser functionality
-        // Only trigger the explosion without blocking normal keyboard behavior
-        triggerExplosion();
-      };
-
-      /**
-       * Handle click to explode text
-       * @param {Event} event - Click or touch event
-       */
-      const handleClick = ( event ) => {
-        // Prevent default for touch events
-        if ( event && event.preventDefault ) {
-          event.preventDefault();
-        }
-
-        // Trigger explosion
-        triggerExplosion();
-      };
-
-      /**
-       * Common function to trigger explosion animation with custom strength
-       */
-      const triggerExplosion = () => {
-        if ( animState.exploding ) return;
-
-        animState.exploding = true;
-        animState.startTime = Date.now();
-        const explosionStrength = textConfig.animation.explosionStrength;
-        const rotationStrength = textConfig.animation.rotationStrength;
-
-        // Assign random velocities to each letter
-        animState.meshes.forEach( mesh => {
-          // Create explosion effect with custom strength
-          mesh.userData.velocity = {
-            x: ( Math.random() - 0.5 ) * explosionStrength,
-            y: ( Math.random() - 0.5 ) * explosionStrength,
-            z: ( Math.random() - 0.5 ) * explosionStrength
+        // Parse URL parameters to customize all text and animation properties
+        const getCustomConfig = () => {
+          const params = new URLSearchParams(window.location.search);
+
+          // Create a deep copy of the default config
+          const config = JSON.parse(JSON.stringify(defaultConfig));
+
+          // Helper function to safely parse hex colors
+          const parseColor = (colorStr) => {
+            if (!colorStr) return null;
+            // Remove # if present and ensure it's a valid hex color
+            colorStr = colorStr.replace(/^#/, '');
+            if (/^[0-9A-F]{6}$/i.test(colorStr)) {
+              return parseInt(colorStr, 16);
+            }
+            return null;
           };
 
-          mesh.userData.rotationVelocity = {
-            x: ( Math.random() - 0.5 ) * rotationStrength,
-            y: ( Math.random() - 0.5 ) * rotationStrength,
-            z: ( Math.random() - 0.5 ) * rotationStrength
+          // Helper function to safely parse numbers
+          const parseNumber = (numStr, defaultValue) => {
+            if (!numStr) return defaultValue;
+            const parsed = parseFloat(numStr);
+            return isNaN(parsed) ? defaultValue : parsed;
           };
 
-          // If this mesh has children (letter mesh), ensure they're visible
-          if ( mesh.children && mesh.children.length > 0 ) {
-            mesh.children.forEach( child => {
-              child.visible = true;
-            } );
-          }
-
-          // If this is a control box for TextGeometry mesh, make both visible
-          if ( mesh.userData.parentMesh ) {
-            mesh.visible = true;
-            if ( mesh.userData.parentMesh ) {
-              mesh.userData.parentMesh.visible = true;
+          // Process text parameters for each text element
+          ['title', 'subtitle', 'attribution'].forEach((textElement) => {
+            // Update text content if provided
+            if (params.has(textElement)) {
+              config[textElement].text = params
+                .get(textElement)
+                .substring(0, textElement === 'attribution' ? 100 : 50); // Limit length for safety
             }
-          }
-        } );
 
-        // Play explosion sound if audio API is available
-        try {
-          const audioContext = new ( window.AudioContext || window.webkitAudioContext )();
-          const oscillator = audioContext.createOscillator();
-          const gain = audioContext.createGain();
+            // Update color if provided
+            const colorParam = params.get(`${textElement}Color`);
+            const parsedColor = parseColor(colorParam);
+            if (parsedColor !== null) config[textElement].color = parsedColor;
 
-          oscillator.type = 'triangle';
-          oscillator.frequency.setValueAtTime( 250, audioContext.currentTime );
-          oscillator.frequency.exponentialRampToValueAtTime( 0.01, audioContext.currentTime + 1.5 );
+            // Update size if provided
+            config[textElement].size = parseNumber(
+              params.get(`${textElement}Size`),
+              config[textElement].size
+            );
 
-          gain.gain.setValueAtTime( 0.1, audioContext.currentTime );
-          gain.gain.exponentialRampToValueAtTime( 0.01, audioContext.currentTime + 1.5 );
+            // Update position if provided
+            config[textElement].yPos = parseNumber(
+              params.get(`${textElement}Y`),
+              config[textElement].yPos
+            );
+          });
 
-          oscillator.connect( gain );
-          gain.connect( audioContext.destination );
+          // Process background parameters
+          const bgColor = parseColor(params.get('bgColor'));
+          if (bgColor !== null) config.background.color = bgColor;
 
-          oscillator.start();
-          oscillator.stop( audioContext.currentTime + 1.5 );
-        } catch ( e ) {
-          // Silently fail if audio isn't supported
+          // Process particle parameters
+          config.background.particleCount = parseNumber(
+            params.get('particleCount'),
+            config.background.particleCount
+          );
+
+          const particleColor = parseColor(params.get('particleColor'));
+          if (particleColor !== null) config.background.particleColor = particleColor;
+
+          config.background.particleSize = parseNumber(
+            params.get('particleSize'),
+            config.background.particleSize
+          );
+
+          config.background.particleOpacity = parseNumber(
+            params.get('particleOpacity'),
+            config.background.particleOpacity
+          );
+
+          // Process animation parameters
+          config.animation.explosionDuration = parseNumber(
+            params.get('explosionDuration'),
+            config.animation.explosionDuration
+          );
+
+          config.animation.explosionStrength = parseNumber(
+            params.get('explosionStrength'),
+            config.animation.explosionStrength
+          );
+
+          config.animation.rotationStrength = parseNumber(
+            params.get('rotationStrength'),
+            config.animation.rotationStrength
+          );
+
+          return config;
+        };
+
+        // Get custom configuration from URL parameters
+        const textConfig = getCustomConfig();
+
+        // Update document title based on text configuration
+        document.title = `${textConfig.title.text} - ${textConfig.subtitle.text}`;
+
+        // Update meta description
+        const metaDescription = document.querySelector('meta[name="description"]');
+        if (metaDescription) {
+          metaDescription.setAttribute(
+            'content',
+            `${textConfig.title.text} - ${textConfig.subtitle.text}`
+          );
         }
 
-        // Set timer to return based on custom duration
-        setTimeout( () => {
-          animState.exploding = false;
-        }, animState.duration );
-      };
+        // Update the fallback content based on the configuration
+        document.getElementById('fallback-title').textContent = textConfig.title.text;
+        document.getElementById('fallback-subtitle').textContent = textConfig.subtitle.text;
+        document.getElementById('fallback-attribution').textContent = textConfig.attribution.text;
 
-      /**
-       * Handle window resize
-       */
-      const handleResize = () => {
-        if ( !camera || !renderer ) return;
+        // Update fallback styles to match custom colors
+        const fallbackTitle = document.getElementById('fallback-title');
+        fallbackTitle.style.color = '#' + textConfig.title.color.toString(16).padStart(6, '0');
 
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize( window.innerWidth, window.innerHeight );
-      };
+        const fallbackSubtitle = document.getElementById('fallback-subtitle');
+        fallbackSubtitle.style.color =
+          '#' + textConfig.subtitle.color.toString(16).padStart(6, '0');
 
-      /**
-       * Animation loop with performance optimizations
-       * @param {number} currentTime - Current timestamp
-       */
-      const animate = ( currentTime ) => {
-        animationId = requestAnimationFrame( animate );
-        const delta = clock.getDelta();
+        const fallbackAttribution = document.getElementById('fallback-attribution');
+        fallbackAttribution.style.color =
+          '#' + textConfig.attribution.color.toString(16).padStart(6, '0');
 
-        // Gentle rotation of text groups when not exploding
-        if ( !animState.exploding ) {
-          textGroups.forEach( group => {
-            group.rotation.y = Math.sin( Date.now() * 0.001 ) * 0.1;
-          } );
-        }
+        // Update body background color
+        document.body.style.backgroundColor =
+          '#' + textConfig.background.color.toString(16).padStart(6, '0');
 
-        // Rotate particles with performance check
-        if ( particles && particles.visible ) {
-          particles.rotation.y += 0.0005;
-          particles.rotation.z += 0.0002;
-        }
-
-        // Handle explosion animation
-        if ( animState.exploding ) {
-          // Move letters outward
-          animState.meshes.forEach( mesh => {
-            if ( !mesh.visible ) return; // Skip invisible meshes
-
-            mesh.position.x += mesh.userData.velocity.x * delta;
-            mesh.position.y += mesh.userData.velocity.y * delta;
-            mesh.position.z += mesh.userData.velocity.z * delta;
-
-            mesh.rotation.x += mesh.userData.rotationVelocity.x * delta;
-            mesh.rotation.y += mesh.userData.rotationVelocity.y * delta;
-            mesh.rotation.z += mesh.userData.rotationVelocity.z * delta;
-          } );
-        } else if ( Date.now() - animState.startTime < animState.duration * 1.5 ) {
-          // Return to original positions
-          const elapsedReturnTime = Date.now() - animState.startTime - animState.duration;
-          const returnProgress = Math.min( elapsedReturnTime / ( animState.duration * 0.5 ), 1 );
-
-          animState.originalPositions.forEach( ( item, i ) => {
-            const mesh = item.object;
-            const origPos = item.position;
-            const origRot = animState.originalRotations[ i ].rotation;
-
-            if ( mesh && mesh.visible ) {
-              // Use easing for smoother return animation
-              const easing = 1 - Math.pow( 1 - returnProgress, 3 ); // Cubic easing
-
-              mesh.position.x += ( origPos.x - mesh.position.x ) * easing * 0.1;
-              mesh.position.y += ( origPos.y - mesh.position.y ) * easing * 0.1;
-              mesh.position.z += ( origPos.z - mesh.position.z ) * easing * 0.1;
-
-              mesh.rotation.x += ( origRot.x - mesh.rotation.x ) * easing * 0.1;
-              mesh.rotation.y += ( origRot.y - mesh.rotation.y ) * easing * 0.1;
-              mesh.rotation.z += ( origRot.z - mesh.rotation.z ) * easing * 0.1;
-
-              // If we've nearly reached the original position, snap to it exactly
-              if ( returnProgress > 0.95 ) {
-                mesh.position.set( origPos.x, origPos.y, origPos.z );
-                mesh.rotation.set( origRot.x, origRot.y, origRot.z );
-              }
-            }
-          } );
-
-          // Reset the text meshes when everything is back
-          if ( returnProgress > 0.99 ) {
-            textGroups.forEach( group => {
-              group.position.set( 0, 0, 0 );
-              group.rotation.set( 0, 0, 0 );
-            } );
+        // Error handling class
+        class SceneError extends Error {
+          constructor(message) {
+            super(message);
+            this.name = 'SceneError';
           }
         }
 
-        // Render the scene with error checking
-        if ( renderer && scene && camera ) {
+        // Explosion animation state
+        const animState = {
+          exploding: false,
+          startTime: 0,
+          duration: textConfig.animation.explosionDuration,
+          meshes: [],
+          originalPositions: [],
+          originalRotations: [],
+        };
+
+        /**
+         * Initialize the 3D scene with error handling
+         * @returns {Promise<boolean>} - Success status
+         */
+        const init = async () => {
           try {
-            renderer.render( scene, camera );
-          } catch ( error ) {
-            console.error( "Render error:", error );
-            cancelAnimationFrame( animationId );
+            // Create scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(textConfig.background.color);
+
+            // Create camera
+            camera = new THREE.PerspectiveCamera(
+              75,
+              window.innerWidth / window.innerHeight,
+              0.1,
+              1000
+            );
+            camera.position.z = 20;
+
+            // Create renderer with error handling
+            try {
+              renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                powerPreference: 'high-performance',
+              });
+
+              if (!renderer) throw new SceneError('WebGL renderer creation failed');
+
+              renderer.setSize(window.innerWidth, window.innerHeight);
+              renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+              // Add renderer to DOM
+              container.appendChild(renderer.domElement);
+            } catch (error) {
+              console.error('Renderer creation failed:', error);
+              throw new SceneError('WebGL not supported or renderer creation failed');
+            }
+
+            // Add lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(1, 1, 1);
+            scene.add(directionalLight);
+
+            // Add accent light for better text visibility
+            const accentLight = new THREE.PointLight(0x002ea2, 0.8); // accentPink
+            accentLight.position.set(0, 0, 10);
+            scene.add(accentLight);
+
+            // Create particle background with custom settings
+            createParticles();
+
+            // Create text with TextGeometry
+            await createText();
+
+            // Hide loading indicator
+            loadingIndicator.style.display = 'none';
+
+            // Event listeners
+            window.addEventListener('resize', handleResize);
+            renderer.domElement.addEventListener('click', handleClick);
+            renderer.domElement.addEventListener('touchstart', handleClick);
+            // Add keyboard event listener to trigger explosion
+            window.addEventListener('keydown', handleKeydown);
+
+            // Start animation loop
+            animate(0);
+
+            return true;
+          } catch (error) {
+            console.error('Error initializing scene:', error);
             showFallback();
+            return false;
           }
-        }
-      };
+        };
 
-      /**
-       * Clean up resources
-       */
-      const cleanup = () => {
-        if ( animationId ) cancelAnimationFrame( animationId );
+        /**
+         * Create text using TextGeometry
+         * @returns {Promise<void>}
+         */
+        const createText = async () => {
+          try {
+            // Create title using custom config
+            const title = await createTextGeometry(
+              scene,
+              textConfig.title.text,
+              textConfig.title.color,
+              textConfig.title.size,
+              textConfig.title.yPos
+            );
+            textGroups.push(title.group);
+            if (title.textMesh) textMeshes.push(title.textMesh);
 
-        window.removeEventListener( 'resize', handleResize );
-        window.removeEventListener( 'keydown', handleKeydown );
-        if ( renderer && renderer.domElement ) {
-          renderer.domElement.removeEventListener( 'click', handleClick );
-          renderer.domElement.removeEventListener( 'touchstart', handleClick );
-        }
+            // Create subtitle using custom config
+            const subtitle = await createTextGeometry(
+              scene,
+              textConfig.subtitle.text,
+              textConfig.subtitle.color,
+              textConfig.subtitle.size,
+              textConfig.subtitle.yPos
+            );
+            textGroups.push(subtitle.group);
+            if (subtitle.textMesh) textMeshes.push(subtitle.textMesh);
 
-        // Dispose of all geometries and materials
-        if ( scene ) {
-          scene.traverse( object => {
-            if ( object.geometry ) object.geometry.dispose();
-            if ( object.material ) {
-              if ( Array.isArray( object.material ) ) {
-                object.material.forEach( material => material.dispose() );
-              } else {
-                object.material.dispose();
+            // Create attribution text using custom config
+            const attribution = await createTextGeometry(
+              scene,
+              textConfig.attribution.text,
+              textConfig.attribution.color,
+              textConfig.attribution.size,
+              textConfig.attribution.yPos
+            );
+            textGroups.push(attribution.group);
+            if (attribution.textMesh) textMeshes.push(attribution.textMesh);
+
+            // Add all meshes to the animation state
+            animState.meshes = [...title.meshes, ...subtitle.meshes, ...attribution.meshes];
+
+            // Save original positions for explosion animation
+            saveOriginalPositions();
+          } catch (error) {
+            console.error('Error creating text:', error);
+            throw new SceneError('Text creation failed');
+          }
+        };
+
+        /**
+         * Create particle background with custom settings
+         */
+        const createParticles = () => {
+          const particleCount = textConfig.background.particleCount;
+          const positions = new Float32Array(particleCount * 3);
+
+          for (let i = 0; i < particleCount; i++) {
+            positions[i * 3] = (Math.random() - 0.5) * 100;
+            positions[i * 3 + 1] = (Math.random() - 0.5) * 100;
+            positions[i * 3 + 2] = (Math.random() - 0.5) * 100;
+          }
+
+          const geometry = new THREE.BufferGeometry();
+          geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+
+          const material = new THREE.PointsMaterial({
+            color: textConfig.background.particleColor,
+            size: textConfig.background.particleSize,
+            transparent: true,
+            opacity: textConfig.background.particleOpacity,
+          });
+
+          particles = new THREE.Points(geometry, material);
+          scene.add(particles);
+        };
+
+        /**
+         * Show fallback text and hide loading indicator
+         */
+        const showFallback = () => {
+          fallback.style.zIndex = '1';
+          loadingIndicator.style.display = 'none';
+        };
+
+        /**
+         * Save original positions for restoring after explosion
+         */
+        const saveOriginalPositions = () => {
+          animState.originalPositions = [];
+          animState.originalRotations = [];
+
+          animState.meshes.forEach((mesh) => {
+            if (mesh.userData && mesh.userData.isLetter) {
+              animState.originalPositions.push({
+                object: mesh,
+                position: new THREE.Vector3(mesh.position.x, mesh.position.y, mesh.position.z),
+              });
+
+              animState.originalRotations.push({
+                object: mesh,
+                rotation: {
+                  x: mesh.rotation.x,
+                  y: mesh.rotation.y,
+                  z: mesh.rotation.z,
+                },
+              });
+            }
+          });
+        };
+
+        /**
+         * Handle key press to explode text
+         * @param {KeyboardEvent} event - Keyboard event
+         */
+        const handleKeydown = (event) => {
+          // Don't prevent default for all keys to allow normal browser functionality
+          // Only trigger the explosion without blocking normal keyboard behavior
+          triggerExplosion();
+        };
+
+        /**
+         * Handle click to explode text
+         * @param {Event} event - Click or touch event
+         */
+        const handleClick = (event) => {
+          // Prevent default for touch events
+          if (event && event.preventDefault) {
+            event.preventDefault();
+          }
+
+          // Trigger explosion
+          triggerExplosion();
+        };
+
+        /**
+         * Common function to trigger explosion animation with custom strength
+         */
+        const triggerExplosion = () => {
+          if (animState.exploding) return;
+
+          animState.exploding = true;
+          animState.startTime = Date.now();
+          const explosionStrength = textConfig.animation.explosionStrength;
+          const rotationStrength = textConfig.animation.rotationStrength;
+
+          // Assign random velocities to each letter
+          animState.meshes.forEach((mesh) => {
+            // Create explosion effect with custom strength
+            mesh.userData.velocity = {
+              x: (Math.random() - 0.5) * explosionStrength,
+              y: (Math.random() - 0.5) * explosionStrength,
+              z: (Math.random() - 0.5) * explosionStrength,
+            };
+
+            mesh.userData.rotationVelocity = {
+              x: (Math.random() - 0.5) * rotationStrength,
+              y: (Math.random() - 0.5) * rotationStrength,
+              z: (Math.random() - 0.5) * rotationStrength,
+            };
+
+            // If this mesh has children (letter mesh), ensure they're visible
+            if (mesh.children && mesh.children.length > 0) {
+              mesh.children.forEach((child) => {
+                child.visible = true;
+              });
+            }
+
+            // If this is a control box for TextGeometry mesh, make both visible
+            if (mesh.userData.parentMesh) {
+              mesh.visible = true;
+              if (mesh.userData.parentMesh) {
+                mesh.userData.parentMesh.visible = true;
               }
             }
-          } );
-        }
+          });
 
-        // Dispose of renderer
-        if ( renderer ) {
-          renderer.dispose();
-          if ( renderer.domElement && renderer.domElement.parentNode ) {
-            renderer.domElement.parentNode.removeChild( renderer.domElement );
+          // Play explosion sound if audio API is available
+          try {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+
+            oscillator.type = 'triangle';
+            oscillator.frequency.setValueAtTime(250, audioContext.currentTime);
+            oscillator.frequency.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5);
+
+            gain.gain.setValueAtTime(0.1, audioContext.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 1.5);
+
+            oscillator.connect(gain);
+            gain.connect(audioContext.destination);
+
+            oscillator.start();
+            oscillator.stop(audioContext.currentTime + 1.5);
+          } catch (e) {
+            // Silently fail if audio isn't supported
           }
+
+          // Set timer to return based on custom duration
+          setTimeout(() => {
+            animState.exploding = false;
+          }, animState.duration);
+        };
+
+        /**
+         * Handle window resize
+         */
+        const handleResize = () => {
+          if (!camera || !renderer) return;
+
+          camera.aspect = window.innerWidth / window.innerHeight;
+          camera.updateProjectionMatrix();
+          renderer.setSize(window.innerWidth, window.innerHeight);
+        };
+
+        /**
+         * Animation loop with performance optimizations
+         * @param {number} currentTime - Current timestamp
+         */
+        const animate = (currentTime) => {
+          animationId = requestAnimationFrame(animate);
+          const delta = clock.getDelta();
+
+          // Gentle rotation of text groups when not exploding
+          if (!animState.exploding) {
+            textGroups.forEach((group) => {
+              group.rotation.y = Math.sin(Date.now() * 0.001) * 0.1;
+            });
+          }
+
+          // Rotate particles with performance check
+          if (particles && particles.visible) {
+            particles.rotation.y += 0.0005;
+            particles.rotation.z += 0.0002;
+          }
+
+          // Handle explosion animation
+          if (animState.exploding) {
+            // Move letters outward
+            animState.meshes.forEach((mesh) => {
+              if (!mesh.visible) return; // Skip invisible meshes
+
+              mesh.position.x += mesh.userData.velocity.x * delta;
+              mesh.position.y += mesh.userData.velocity.y * delta;
+              mesh.position.z += mesh.userData.velocity.z * delta;
+
+              mesh.rotation.x += mesh.userData.rotationVelocity.x * delta;
+              mesh.rotation.y += mesh.userData.rotationVelocity.y * delta;
+              mesh.rotation.z += mesh.userData.rotationVelocity.z * delta;
+            });
+          } else if (Date.now() - animState.startTime < animState.duration * 1.5) {
+            // Return to original positions
+            const elapsedReturnTime = Date.now() - animState.startTime - animState.duration;
+            const returnProgress = Math.min(elapsedReturnTime / (animState.duration * 0.5), 1);
+
+            animState.originalPositions.forEach((item, i) => {
+              const mesh = item.object;
+              const origPos = item.position;
+              const origRot = animState.originalRotations[i].rotation;
+
+              if (mesh && mesh.visible) {
+                // Use easing for smoother return animation
+                const easing = 1 - Math.pow(1 - returnProgress, 3); // Cubic easing
+
+                mesh.position.x += (origPos.x - mesh.position.x) * easing * 0.1;
+                mesh.position.y += (origPos.y - mesh.position.y) * easing * 0.1;
+                mesh.position.z += (origPos.z - mesh.position.z) * easing * 0.1;
+
+                mesh.rotation.x += (origRot.x - mesh.rotation.x) * easing * 0.1;
+                mesh.rotation.y += (origRot.y - mesh.rotation.y) * easing * 0.1;
+                mesh.rotation.z += (origRot.z - mesh.rotation.z) * easing * 0.1;
+
+                // If we've nearly reached the original position, snap to it exactly
+                if (returnProgress > 0.95) {
+                  mesh.position.set(origPos.x, origPos.y, origPos.z);
+                  mesh.rotation.set(origRot.x, origRot.y, origRot.z);
+                }
+              }
+            });
+
+            // Reset the text meshes when everything is back
+            if (returnProgress > 0.99) {
+              textGroups.forEach((group) => {
+                group.position.set(0, 0, 0);
+                group.rotation.set(0, 0, 0);
+              });
+            }
+          }
+
+          // Render the scene with error checking
+          if (renderer && scene && camera) {
+            try {
+              renderer.render(scene, camera);
+            } catch (error) {
+              console.error('Render error:', error);
+              cancelAnimationFrame(animationId);
+              showFallback();
+            }
+          }
+        };
+
+        /**
+         * Clean up resources
+         */
+        const cleanup = () => {
+          if (animationId) cancelAnimationFrame(animationId);
+
+          window.removeEventListener('resize', handleResize);
+          window.removeEventListener('keydown', handleKeydown);
+          if (renderer && renderer.domElement) {
+            renderer.domElement.removeEventListener('click', handleClick);
+            renderer.domElement.removeEventListener('touchstart', handleClick);
+          }
+
+          // Dispose of all geometries and materials
+          if (scene) {
+            scene.traverse((object) => {
+              if (object.geometry) object.geometry.dispose();
+              if (object.material) {
+                if (Array.isArray(object.material)) {
+                  object.material.forEach((material) => material.dispose());
+                } else {
+                  object.material.dispose();
+                }
+              }
+            });
+          }
+
+          // Dispose of renderer
+          if (renderer) {
+            renderer.dispose();
+            if (renderer.domElement && renderer.domElement.parentNode) {
+              renderer.domElement.parentNode.removeChild(renderer.domElement);
+            }
+          }
+        };
+
+        // Initialize the scene
+        try {
+          const success = await init();
+
+          // Add cleanup handler
+          window.addEventListener('beforeunload', cleanup);
+
+          // Log setup result and customization instructions
+          if (success) {
+            console.log('3D scene initialized with TextGeometry. Click or tap to explode text.');
+
+            // Show customization help in console
+            console.log(
+              '%cCustomization Options',
+              'font-weight: bold; font-size: 14px; color: #0F79C6;'
+            );
+            console.log('This page can be customized using URL parameters. Examples:');
+            console.log('• Change text: ?title=CUSTOM TITLE&subtitle=CUSTOM SUBTITLE');
+            console.log(
+              '• Change colors: ?titleColor=ff0000&subtitleColor=00ff00&attributionColor=0000ff&bgColor=000000'
+            );
+            console.log('• Change text size: ?titleSize=1.5&subtitleSize=1.0&attributionSize=0.5');
+            console.log('• Change positions: ?titleY=4&subtitleY=-1&attributionY=-6');
+            console.log(
+              '• Change particles: ?particleCount=2000&particleSize=0.2&particleColor=ff00ff'
+            );
+            console.log(
+              '• Change explosion: ?explosionStrength=20&explosionDuration=4000&rotationStrength=5'
+            );
+            console.log('See README.md for more details and examples.');
+          } else {
+            console.warn('3D initialization failed. Using fallback display.');
+          }
+        } catch (error) {
+          console.error('Fatal error during initialization:', error);
+          showFallback();
         }
-      };
-
-      // Initialize the scene
-      try {
-        const success = await init();
-
-        // Add cleanup handler
-        window.addEventListener( 'beforeunload', cleanup );
-
-        // Log setup result and customization instructions
-        if ( success ) {
-          console.log( '3D scene initialized with TextGeometry. Click or tap to explode text.' );
-
-          // Show customization help in console
-          console.log( '%cCustomization Options', 'font-weight: bold; font-size: 14px; color: #0F79C6;' );
-          console.log( 'This page can be customized using URL parameters. Examples:' );
-          console.log( '• Change text: ?title=CUSTOM TITLE&subtitle=CUSTOM SUBTITLE' );
-          console.log( '• Change colors: ?titleColor=ff0000&subtitleColor=00ff00&attributionColor=0000ff&bgColor=000000' );
-          console.log( '• Change text size: ?titleSize=1.5&subtitleSize=1.0&attributionSize=0.5' );
-          console.log( '• Change positions: ?titleY=4&subtitleY=-1&attributionY=-6' );
-          console.log( '• Change particles: ?particleCount=2000&particleSize=0.2&particleColor=ff00ff' );
-          console.log( '• Change explosion: ?explosionStrength=20&explosionDuration=4000&rotationStrength=5' );
-          console.log( 'See README.md for more details and examples.' );
-        } else {
-          console.warn( '3D initialization failed. Using fallback display.' );
-        }
-      } catch ( error ) {
-        console.error( "Fatal error during initialization:", error );
-        showFallback();
-      }
-    } );
-  </script>
-</body>
-
+      });
+    </script>
+  </body>
 </html>

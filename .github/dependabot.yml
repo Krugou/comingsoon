@@ -4,45 +4,45 @@ updates:
   # ------------------------
   # NPM dependencies
   # ------------------------
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "daily"
-      time: "06:00"
-      timezone: "UTC"
+      interval: 'daily'
+      time: '06:00'
+      timezone: 'UTC'
 
     open-pull-requests-limit: 10
 
     groups:
       minor-and-patch:
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
 
       major:
         update-types:
-          - "major"
+          - 'major'
 
     ignore:
-      - dependency-name: "*"
-        versions: ["*-alpha*", "*-beta*", "*-rc*"]
+      - dependency-name: '*'
+        versions: ['*-alpha*', '*-beta*', '*-rc*']
 
   # ------------------------
   # GitHub Actions
   # ------------------------
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "daily"
-      time: "06:00"
-      timezone: "UTC"
+      interval: 'daily'
+      time: '06:00'
+      timezone: 'UTC'
 
     groups:
       minor-and-patch:
         update-types:
-          - "minor"
-          - "patch"
+          - 'minor'
+          - 'patch'
 
       major:
         update-types:
-          - "major"
+          - 'major'

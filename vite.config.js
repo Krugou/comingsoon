@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite'
+import { defineConfig } from 'vite';
 
 export default defineConfig({
   root: '.',
@@ -12,11 +12,11 @@ export default defineConfig({
         dashboard: 'dashboard/controls.html',
         'name-tag-dashboard': 'dashboard/name-tag-chyron.html',
         'breaking-news-dashboard': 'dashboard/breaking-news.html',
-        standalone: 'examples/index.html'
-      }
-    }
+        standalone: 'examples/index.html',
+      },
+    },
   },
   server: {
-    port: 3000
-  }
-})
+    port: 3000,
+  },
+});

@@ -1,10 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./graphics/**/*.{html,js}",
-    "./dashboard/**/*.{html,js}",
-    "./examples/**/*.{html,js}",
-    "./shared/**/*.js"
+    './graphics/**/*.{html,js}',
+    './dashboard/**/*.{html,js}',
+    './examples/**/*.{html,js}',
+    './shared/**/*.js',
   ],
   theme: {
     extend: {
@@ -16,12 +16,12 @@ export default {
         lightText: '#f7fafc',
         accentPink: '#002ea2',
         grayText: '#637786',
-      }
+      },
     },
     fontFamily: {
-      sans: [ 'Lexend Mega', 'sans-serif' ]
-    }
+      sans: ['Lexend Mega', 'sans-serif'],
+    },
   },
   darkMode: 'class',
   plugins: [],
-}
+};

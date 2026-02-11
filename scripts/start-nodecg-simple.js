@@ -18,12 +18,19 @@ const { spawn } = require('child_process');
   const instancePkg = path.join(instanceDir, 'package.json');
   if (!fs.existsSync(instancePkg)) {
     log('Creating NodeCG instance package.json');
-    await fsp.writeFile(instancePkg, JSON.stringify({
-      name: 'nodecg-instance',
-      version: '1.0.0',
-      private: true,
-      dependencies: { nodecg: '^2.2.1' }
-    }, null, 2));
+    await fsp.writeFile(
+      instancePkg,
+      JSON.stringify(
+        {
+          name: 'nodecg-instance',
+          version: '1.0.0',
+          private: true,
+          dependencies: { nodecg: '^2.2.1' },
+        },
+        null,
+        2
+      )
+    );
   }
 
   // Ensure dependencies in root (unless user opts out)
@@ -41,8 +48,10 @@ const { spawn } = require('child_process');
       try {
         await new Promise((res, rej) => {
           const p = spawn(baseCmd, args, spawnOpts);
-          p.on('error', err => rej(err));
-          p.on('exit', code => code === 0 ? res() : rej(new Error(`npm install failed with code ${code}`)));
+          p.on('error', (err) => rej(err));
+          p.on('exit', (code) =>
+            code === 0 ? res() : rej(new Error(`npm install failed with code ${code}`))
+          );
         });
         return;
       } catch (err) {
@@ -53,21 +62,33 @@ const { spawn } = require('child_process');
             log('Retrying npm install using shell fallback...');
             await new Promise((res, rej) => {
               const p = spawn(baseCmd, args, { ...spawnOpts, shell: true });
-              p.on('error', e => rej(e));
-              p.on('exit', code => code === 0 ? res() : rej(new Error(`npm install (shell) failed with code ${code}`)));
+              p.on('error', (e) => rej(e));
+              p.on('exit', (code) =>
+                code === 0 ? res() : rej(new Error(`npm install (shell) failed with code ${code}`))
+              );
             });
             return;
           } catch (shellErr) {
             log(`Shell fallback failed: ${shellErr.code || ''} ${shellErr.message}`);
             // Fallback 2: directly invoke npm-cli.js via node executable
             try {
-              const npmCli = path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
+              const npmCli = path.join(
+                path.dirname(process.execPath),
+                'node_modules',
+                'npm',
+                'bin',
+                'npm-cli.js'
+              );
               if (fs.existsSync(npmCli)) {
                 log('Retrying npm install by invoking npm-cli.js directly...');
                 await new Promise((res, rej) => {
                   const p = spawn(process.execPath, [npmCli, ...args], spawnOpts);
-                  p.on('error', e => rej(e));
-                  p.on('exit', code => code === 0 ? res() : rej(new Error(`npm install (npm-cli.js) failed with code ${code}`)));
+                  p.on('error', (e) => rej(e));
+                  p.on('exit', (code) =>
+                    code === 0
+                      ? res()
+                      : rej(new Error(`npm install (npm-cli.js) failed with code ${code}`))
+                  );
                 });
                 return;
               } else {
@@ -150,7 +171,12 @@ const { spawn } = require('child_process');
   log(`Graphics: http://localhost:${port}/bundles/${bundleName}/graphics/`);
   log(`Dashboard: http://localhost:${port}/#/bundle/${bundleName}`);
 
-  const nodecgBin = path.join(rootDir, 'node_modules', '.bin', process.platform === 'win32' ? 'nodecg.cmd' : 'nodecg');
+  const nodecgBin = path.join(
+    rootDir,
+    'node_modules',
+    '.bin',
+    process.platform === 'win32' ? 'nodecg.cmd' : 'nodecg'
+  );
 
   // We'll prefer spawning the CLI JS directly (avoids .cmd shim issues & lets us control args)
   let cliEntry = null;
@@ -159,8 +185,10 @@ const { spawn } = require('child_process');
     if (fs.existsSync(pkgPath)) {
       const pkg = JSON.parse(await fsp.readFile(pkgPath, 'utf8'));
       if (pkg && pkg.bin) {
-        if (typeof pkg.bin === 'string') cliEntry = path.join(rootDir, 'node_modules', 'nodecg', pkg.bin);
-        else if (pkg.bin.nodecg) cliEntry = path.join(rootDir, 'node_modules', 'nodecg', pkg.bin.nodecg);
+        if (typeof pkg.bin === 'string')
+          cliEntry = path.join(rootDir, 'node_modules', 'nodecg', pkg.bin);
+        else if (pkg.bin.nodecg)
+          cliEntry = path.join(rootDir, 'node_modules', 'nodecg', pkg.bin.nodecg);
       }
     }
   } catch (e) {
@@ -182,7 +210,9 @@ const { spawn } = require('child_process');
     log(`  cwd(instance): ${instanceDir}`);
     log(`  nodecgBin exists: ${fs.existsSync(nodecgBin)}`);
     if (fs.existsSync(nodecgBin)) {
-      try { log(`  nodecgBin size: ${fs.statSync(nodecgBin).size}`); } catch {}
+      try {
+        log(`  nodecgBin size: ${fs.statSync(nodecgBin).size}`);
+      } catch {}
     }
     log(`  PATH: ${process.env.PATH}`);
   };
@@ -194,9 +224,15 @@ const { spawn } = require('child_process');
       try {
         log(`Attempting direct node execution: ${cliEntry}`);
         await new Promise((res, rej) => {
-          const p = spawn(process.execPath, [cliEntry, ...launchArgs], { cwd: instanceDir, stdio: 'inherit', windowsHide: false });
+          const p = spawn(process.execPath, [cliEntry, ...launchArgs], {
+            cwd: instanceDir,
+            stdio: 'inherit',
+            windowsHide: false,
+          });
           p.on('error', rej);
-          p.on('exit', code => code === 0 ? res() : rej(new Error(`node (cli) exited with code ${code}`)));
+          p.on('exit', (code) =>
+            code === 0 ? res() : rej(new Error(`node (cli) exited with code ${code}`))
+          );
         });
         return true;
       } catch (e1a) {
@@ -209,9 +245,15 @@ const { spawn } = require('child_process');
     // Strategy 2: direct binary (.cmd / shim)
     try {
       await new Promise((res, rej) => {
-        const p = spawn(nodecgBin, launchArgs, { cwd: instanceDir, stdio: 'inherit', windowsHide: false });
+        const p = spawn(nodecgBin, launchArgs, {
+          cwd: instanceDir,
+          stdio: 'inherit',
+          windowsHide: false,
+        });
         p.on('error', rej);
-        p.on('exit', code => code === 0 ? res() : rej(new Error(`nodecg exited with code ${code}`)));
+        p.on('exit', (code) =>
+          code === 0 ? res() : rej(new Error(`nodecg exited with code ${code}`))
+        );
       });
       return true;
     } catch (e1) {
@@ -224,20 +266,28 @@ const { spawn } = require('child_process');
       await new Promise((res, rej) => {
         const p = spawn(nodecgBin, launchArgs, { cwd: instanceDir, stdio: 'inherit', shell: true });
         p.on('error', rej);
-        p.on('exit', code => code === 0 ? res() : rej(new Error(`nodecg (shell) exited with code ${code}`)));
+        p.on('exit', (code) =>
+          code === 0 ? res() : rej(new Error(`nodecg (shell) exited with code ${code}`))
+        );
       });
       return true;
     } catch (e2) {
       log(`Shell spawn failed: ${e2.code || ''} ${e2.message}`);
     }
 
-  // Strategy 4: use npx (resolves command differently)
+    // Strategy 4: use npx (resolves command differently)
     try {
       log('Retrying via npx nodecg ...');
       await new Promise((res, rej) => {
-        const p = spawn(process.platform === 'win32' ? 'npx.cmd' : 'npx', ['nodecg', ...launchArgs], { cwd: instanceDir, stdio: 'inherit', windowsHide: false });
+        const p = spawn(
+          process.platform === 'win32' ? 'npx.cmd' : 'npx',
+          ['nodecg', ...launchArgs],
+          { cwd: instanceDir, stdio: 'inherit', windowsHide: false }
+        );
         p.on('error', rej);
-        p.on('exit', code => code === 0 ? res() : rej(new Error(`npx nodecg exited with code ${code}`)));
+        p.on('exit', (code) =>
+          code === 0 ? res() : rej(new Error(`npx nodecg exited with code ${code}`))
+        );
       });
       return true;
     } catch (e3) {
@@ -250,12 +300,18 @@ const { spawn } = require('child_process');
       if (fs.existsSync(guessPath)) {
         try {
           log(`Trying guessed CLI path: ${guessPath}`);
-            await new Promise((res, rej) => {
-              const p = spawn(process.execPath, [guessPath, ...launchArgs], { cwd: instanceDir, stdio: 'inherit', windowsHide: false });
-              p.on('error', rej);
-              p.on('exit', code => code === 0 ? res() : rej(new Error(`node ${guess} exited with code ${code}`)));
+          await new Promise((res, rej) => {
+            const p = spawn(process.execPath, [guessPath, ...launchArgs], {
+              cwd: instanceDir,
+              stdio: 'inherit',
+              windowsHide: false,
             });
-            return true;
+            p.on('error', rej);
+            p.on('exit', (code) =>
+              code === 0 ? res() : rej(new Error(`node ${guess} exited with code ${code}`))
+            );
+          });
+          return true;
         } catch (gErr) {
           log(`Guess path failed (${guess}): ${gErr.code || ''} ${gErr.message}`);
         }

@@ -41,12 +41,12 @@ export function parseUrlConfig() {
   if (titleColor !== null) {
     config.title = { ...config.title, color: titleColor };
   }
-  
+
   const subtitleColor = parseColor(params.get('subtitleColor'));
   if (subtitleColor !== null) {
     config.subtitle = { ...config.subtitle, color: subtitleColor };
   }
-  
+
   const attributionColor = parseColor(params.get('attributionColor'));
   if (attributionColor !== null) {
     config.attribution = { ...config.attribution, color: attributionColor };
@@ -57,12 +57,12 @@ export function parseUrlConfig() {
   if (titleSize !== undefined) {
     config.title = { ...config.title, size: titleSize };
   }
-  
+
   const subtitleSize = parseNumber(params.get('subtitleSize'));
   if (subtitleSize !== undefined) {
     config.subtitle = { ...config.subtitle, size: subtitleSize };
   }
-  
+
   const attributionSize = parseNumber(params.get('attributionSize'));
   if (attributionSize !== undefined) {
     config.attribution = { ...config.attribution, size: attributionSize };
@@ -73,12 +73,12 @@ export function parseUrlConfig() {
   if (titleY !== undefined) {
     config.title = { ...config.title, yPos: titleY };
   }
-  
+
   const subtitleY = parseNumber(params.get('subtitleY'));
   if (subtitleY !== undefined) {
     config.subtitle = { ...config.subtitle, yPos: subtitleY };
   }
-  
+
   const attributionY = parseNumber(params.get('attributionY'));
   if (attributionY !== undefined) {
     config.attribution = { ...config.attribution, yPos: attributionY };
@@ -136,7 +136,7 @@ export function parseUrlConfig() {
 export function showFallback(config) {
   const container = document.getElementById('scene-container');
   const fallback = document.getElementById('fallback-container');
-  
+
   if (container) container.style.display = 'none';
   if (fallback) fallback.style.display = 'flex';
 
@@ -168,6 +168,7 @@ export function showFallback(config) {
 
   // Update body background color
   if (config.background && config.background.color !== undefined) {
-    document.body.style.backgroundColor = '#' + config.background.color.toString(16).padStart(6, '0');
+    document.body.style.backgroundColor =
+      '#' + config.background.color.toString(16).padStart(6, '0');
   }
 }
