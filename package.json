@@ -70,19 +70,19 @@
   },
   "dependencies": {
     "nodecg": "^2.6.4",
-    "three": "^0.182.0"
+    "three": "^0.183.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/eslint__js": "^9.14.0",
-    "autoprefixer": "^10.4.24",
-    "eslint": "^10.0.0",
+    "autoprefixer": "^10.4.27",
+    "eslint": "^10.0.2",
     "husky": "^9.1.7",
-    "lint-staged": "^16.2.7",
-    "postcss": "^8.5.6",
+    "lint-staged": "^16.3.1",
+    "postcss": "^8.5.8",
     "prettier": "^3.8.1",
-    "tailwindcss": "^4.1.18",
-    "typescript-eslint": "^8.55.0",
+    "tailwindcss": "^4.2.1",
+    "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1"
   },
   "lint-staged": {
