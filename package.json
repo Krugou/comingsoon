@@ -70,7 +70,7 @@
   },
   "dependencies": {
     "nodecg": "^2.6.4",
-    "three": "^0.183.2"
+    "three": "^0.184.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
