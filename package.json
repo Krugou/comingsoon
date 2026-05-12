@@ -78,12 +78,12 @@
     "autoprefixer": "^10.5.0",
     "eslint": "^10.3.0",
     "husky": "^9.1.7",
-    "lint-staged": "^17.0.2",
+    "lint-staged": "^17.0.4",
     "postcss": "^8.5.14",
     "prettier": "^3.8.3",
-    "tailwindcss": "^4.2.4",
+    "tailwindcss": "^4.3.0",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.0.10"
+    "vite": "^8.0.12"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,css,md}": [
