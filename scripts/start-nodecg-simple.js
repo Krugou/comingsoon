@@ -12,6 +12,23 @@ const { spawn } = require('child_process');
   const port = process.env.PORT || 9090;
 
   const log = (m) => console.log(`[nodecg] ${m}`);
+  const removePathIfExists = async (targetPath) => {
+    try {
+      await fsp.rm(targetPath, { recursive: true, force: true });
+    } catch (err) {
+      if (err.code !== 'ENOENT') throw err;
+    }
+  };
+  const sameSymlinkTarget = async (linkPath, targetPath) => {
+    try {
+      const stat = await fsp.lstat(linkPath);
+      if (!stat.isSymbolicLink()) return false;
+      const resolvedLink = await fsp.realpath(linkPath);
+      return path.resolve(resolvedLink) === path.resolve(targetPath);
+    } catch {
+      return false;
+    }
+  };
 
   await fsp.mkdir(bundlesDir, { recursive: true });
 
@@ -118,25 +135,34 @@ const { spawn } = require('child_process');
 
   // Link node_modules into instance
   const instanceNodeModules = path.join(instanceDir, 'node_modules');
-  if (!fs.existsSync(instanceNodeModules)) {
+  const rootNodeModules = path.join(rootDir, 'node_modules');
+  if (await sameSymlinkTarget(instanceNodeModules, rootNodeModules)) {
+    log('node_modules already linked into instance');
+  } else {
     try {
+      await removePathIfExists(instanceNodeModules);
       const type = process.platform === 'win32' ? 'junction' : 'dir';
-      await fsp.symlink(path.join(rootDir, 'node_modules'), instanceNodeModules, type);
+      await fsp.symlink(rootNodeModules, instanceNodeModules, type);
       log('Linked node_modules into instance');
     } catch {
       log('Symlink node_modules failed, copying (may be slower)');
-      await fsp.cp(path.join(rootDir, 'node_modules'), instanceNodeModules, { recursive: true });
+      await removePathIfExists(instanceNodeModules);
+      await fsp.cp(rootNodeModules, instanceNodeModules, { recursive: true });
     }
   }
 
   // Link bundle
-  if (!fs.existsSync(bundleLink)) {
+  if (await sameSymlinkTarget(bundleLink, rootDir)) {
+    log('Bundle already linked');
+  } else {
     try {
+      await removePathIfExists(bundleLink);
       const type = process.platform === 'win32' ? 'junction' : 'dir';
       await fsp.symlink(rootDir, bundleLink, type);
       log('Bundle symlink created');
     } catch {
       log('Bundle symlink failed, copying bundle');
+      await removePathIfExists(bundleLink);
       await fsp.mkdir(bundleLink, { recursive: true });
       // Minimal copy excluding instance and node_modules
       const exclude = new Set(['node_modules', 'nodecg-instance']);
