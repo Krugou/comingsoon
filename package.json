@@ -4,7 +4,7 @@
   "description": "A 3D interactive Coming Soon page for NodeCG with remote control functionality",
   "main": "comingsoon/extension/index.js",
   "scripts": {
-    "build": "vite build",
+    "build": "node ./node_modules/vite/bin/vite.js build",
     "dev": "vite",
     "preview": "vite preview",
     "standalone": "python3 -m http.server 8000",
