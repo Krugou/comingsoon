@@ -73,7 +73,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.18",
-    "autoprefixer": "^10.5.6",
+    "autoprefixer": "^10.6.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.5.1",
     "postcss": "^8.5.28",
